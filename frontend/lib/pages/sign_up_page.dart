@@ -1,19 +1,83 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/pages/login_page.dart';
+import 'package:frontend/pages/verification_page.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
   @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  bool passwordVisible = true;
+  bool confirmPasswordVisible = true;
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+
+  void registerUser() async {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty ||
+        fullNameController.text.isEmpty ||
+        phoneNumberController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) =>
+            const AlertDialog(content: Text("Please fill all the fields")),
+      );
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) => const Center(
+                child: CircularProgressIndicator(),
+              ));
+      if (passwordController.text != confirmPasswordController.text) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) =>
+              const AlertDialog(content: Text("Passwords do not match")),
+        );
+      } else {
+        try {
+          UserCredential userCredential =
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => VerificationPage(
+                        phoneNumber: phoneNumberController.text,
+                      )),
+              (Route route) => false);
+        } on FirebaseAuthException catch (e) {
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(content: Text(e.message!)),
+          );
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(top: height * 0.20),
+          padding: EdgeInsets.only(top: height * 0.10),
           child: Column(
             children: [
               Text(
@@ -34,13 +98,14 @@ class SignUpPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: height * 0.2),
+              SizedBox(height: height * 0.1),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.07),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextField(
+                      controller: fullNameController,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -53,12 +118,27 @@ class SignUpPage extends StatelessWidget {
                         fillColor: Theme.of(context).colorScheme.tertiary,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(height: height * 0.06),
+                    SizedBox(height: height * 0.02),
                     TextField(
+                      controller: emailController,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -71,12 +151,27 @@ class SignUpPage extends StatelessWidget {
                         fillColor: Theme.of(context).colorScheme.tertiary,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(height: height * 0.06),
+                    SizedBox(height: height * 0.02),
                     TextField(
+                      controller: phoneNumberController,
                       keyboardType: TextInputType.number,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -91,13 +186,28 @@ class SignUpPage extends StatelessWidget {
                         fillColor: Theme.of(context).colorScheme.tertiary,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(height: height * 0.06),
+                    SizedBox(height: height * 0.02),
                     TextField(
-                      obscureText: true,
+                      controller: passwordController,
+                      obscureText: passwordVisible,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: width * 0.05,
@@ -110,16 +220,45 @@ class SignUpPage extends StatelessWidget {
                         fillColor: Theme.of(context).colorScheme.tertiary,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(Icons.visibility,
+                          borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.secondary,
-                            size: width * 0.06),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.only(right: width * 0.03),
+                          child: IconButton(
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: width * 0.06,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: height * 0.06),
+                    SizedBox(height: height * 0.02),
                     TextField(
-                      obscureText: true,
+                      controller: confirmPasswordController,
+                      obscureText: confirmPasswordVisible,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: width * 0.05,
@@ -132,41 +271,72 @@ class SignUpPage extends StatelessWidget {
                         fillColor: Theme.of(context).colorScheme.tertiary,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(Icons.visibility,
+                          borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.secondary,
-                            size: width * 0.06),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.only(right: width * 0.03),
+                          child: IconButton(
+                            icon: Icon(
+                              confirmPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: width * 0.06,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                confirmPasswordVisible =
+                                    !confirmPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: height * 0.2),
+              SizedBox(height: height * 0.1),
               Padding(
                 padding: EdgeInsets.only(
-                  bottom: height * 0.1,
+                  bottom: height * 0.07,
                 ),
                 child: Column(
                   children: [
                     SizedBox(
-                      width: width * 0.6,
+                      width: width * 0.83,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          registerUser();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.inversePrimary,
                           padding: EdgeInsets.all(width * 0.05),
                           textStyle: TextStyle(fontSize: width * 0.05),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(9.0),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
                         child: Text(
                           'Sign In',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.06,
+                            fontSize: width * 0.05,
                           ),
                         ),
                       ),
@@ -206,13 +376,14 @@ class SignUpPage extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                    builder: (context) => const LoginPage()),
+                                    builder: (context) => LoginPage()),
                                 (Route route) => false);
                           },
                           child: Text(
                             " Login",
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.inverseSurface,
+                              color:
+                                  Theme.of(context).colorScheme.inverseSurface,
                               fontSize: width * 0.03,
                             ),
                             textAlign: TextAlign.center,
