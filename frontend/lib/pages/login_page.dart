@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/auth/auth.dart';
 import 'package:frontend/pages/sign_up_page.dart';
-import 'package:frontend/pages/verification_page.dart';
+import 'package:frontend/services/user_services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,11 +12,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   bool passwordVisible = true;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final UserService _userService = UserService();
 
   void login() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
@@ -32,12 +33,10 @@ class _LoginPageState extends State<LoginPage> {
                 child: CircularProgressIndicator(),
               ));
       try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
+        await _userService.login(
+            context, emailController.text, passwordController.text);
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const Scaffold()),
+            MaterialPageRoute(builder: (context) =>  AuthPage()),
             (Route route) => false);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);

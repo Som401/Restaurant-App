@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/verification_page.dart';
+import 'package:frontend/services/user_services.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,10 +17,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  final UserService _userService = UserService();
 
   void registerUser() async {
     if (emailController.text.isEmpty ||
@@ -47,10 +50,11 @@ class _SignUpPageState extends State<SignUpPage> {
         );
       } else {
         try {
-          UserCredential userCredential =
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
+          await _userService.registerUser(
+            emailController.text,
+            passwordController.text,
+            fullNameController.text,
+            phoneNumberController.text,
           );
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -59,10 +63,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       )),
               (Route route) => false);
         } on FirebaseAuthException catch (e) {
-          Navigator.pop(context);
+          Navigator.pop(context); 
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(content: Text(e.message!)),
+            builder: (context) =>
+                AlertDialog(content: Text(e.message ?? "An error occurred")),
+          );
+        } catch (e) {
+          Navigator.pop(context); 
+          showDialog(
+            context: context,
+            builder: (context) =>
+                AlertDialog(content: Text("An unexpected error occurred")),
           );
         }
       }

@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/splash_screen_page.dart';
-import 'package:frontend/theme/theme_provider.dart';
+import 'package:frontend/providers/theme_provider.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     if (kIsWeb) {
@@ -25,8 +26,11 @@ void main() async{
   } catch (e) {
     print('Failed to initialize Firebase: $e');
   }
-  runApp(ChangeNotifierProvider(
-    create: (context) => ThemeProvider(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ChangeNotifierProvider(create: (context) => UserProvider()),
+    ],
     child: const MyApp(),
   ));
 }
