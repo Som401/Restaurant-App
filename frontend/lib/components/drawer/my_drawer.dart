@@ -36,7 +36,8 @@ class MyDrawer extends StatelessWidget {
               children: [
                 Image.asset(
                   logoPath,
-                  width: minDimension * 0.7,
+                  width: minDimension * 0.4,
+                  height: minDimension * 0.6,
                 ),
                 Padding(
                   padding: EdgeInsets.all(width * 0.02),

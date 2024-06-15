@@ -70,6 +70,15 @@ flutter:
      - assets/images/light_mode_delcapo_logo.png
      #- assets/images/logo.png
      - assets/images/google_logo.png
+     - assets/images/food_logo/pizza.png
+     - "assets/images/food_logo/pizza.png"
+     - "assets/images/food_logo/burger.png"
+     - "assets/images/food_logo/steak.png"
+     - "assets/images/food_logo/spaghetti.png"
+     - "assets/images/food_logo/salad.png"
+     - "assets/images/food_logo/fried-potatoes.png"
+     - "assets/images/food_logo/gelato.png"
+     - "assets/images/food_logo/drink.png"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

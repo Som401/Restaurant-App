@@ -26,7 +26,7 @@ class SplashScreen extends StatelessWidget {
       nextScreen: AuthPage(),
       backgroundColor: Theme.of(context).colorScheme.background,
       splashIconSize: iconSize,
-      duration: 3000,
+      duration: 500,
     );
   }
 }
