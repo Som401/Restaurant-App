@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class FoodCategoryIcon extends StatefulWidget {
@@ -22,33 +21,29 @@ class _FoodCategoryIconState extends State<FoodCategoryIcon> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-    if (widget.isSelected) {
-      print(widget.categoryName);
-      print(widget.isSelected);
-    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           padding: EdgeInsets.all(minDimension * 0.02),
           decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .tertiary
-                .withOpacity(widget.isSelected ? 1.0 : 0.5),
+            color: Theme.of(context).colorScheme.tertiary,
             shape: BoxShape.circle,
           ),
           child: Image.asset(
             widget.imagePath,
-            width: minDimension * 0.09,
+            width: minDimension * 0.11,
           ),
         ),
         SizedBox(height: minDimension * 0.01),
         Text(
           widget.categoryName,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
+            color: widget.isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
             fontSize: minDimension * 0.05,
+            fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ],

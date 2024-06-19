@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/auth/auth.dart';
 import 'package:frontend/pages/sign_up_page.dart';
 import 'package:frontend/services/user_services.dart';
 
@@ -35,9 +34,9 @@ class _LoginPageState extends State<LoginPage> {
       try {
         await _userService.login(
             context, emailController.text, passwordController.text);
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) =>  AuthPage()),
-            (Route route) => false);
+        if(context.mounted) {
+          Navigator.pop(context);
+        }
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         showDialog(

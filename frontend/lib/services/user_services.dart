@@ -41,9 +41,9 @@ class UserService {
   }
 
   Future<void> signOut(BuildContext context) async {
-  await auth.FirebaseAuth.instance.signOut();
-  Provider.of<UserProvider>(context, listen: false).clearUser();
-}
+    await auth.FirebaseAuth.instance.signOut();
+    Provider.of<UserProvider>(context, listen: false).clearUser();
+  }
 
   Future<User> fetchUserDetails(String uid) async {
     final DocumentSnapshot userDoc =
