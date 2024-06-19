@@ -33,6 +33,7 @@ class _FoodCategoryIconState extends State<FoodCategoryIcon> {
           child: Image.asset(
             widget.imagePath,
             width: minDimension * 0.11,
+            height: minDimension * 0.11,
           ),
         ),
         SizedBox(height: minDimension * 0.01),

@@ -34,7 +34,7 @@ class CategoryTabBarState extends State<CategoryTabBar> {
 
   void _setActiveTab() {
     if (mounted) {
-      setState(() {}); 
+      setState(() {});
     }
   }
 
@@ -44,8 +44,9 @@ class CategoryTabBarState extends State<CategoryTabBar> {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     final categories = generateCategoryNames();
+
     return SizedBox(
-      height: height * 0.12,
+      height: minDimension * 0.25,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
