@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       title: 'Restaurant App',
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).themeData,
-      home: const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }

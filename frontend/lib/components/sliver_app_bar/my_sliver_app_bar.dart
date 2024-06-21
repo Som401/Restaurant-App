@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/cart_page.dart';
 
 class MySliverAppBar extends StatelessWidget {
   final Widget title;
@@ -52,7 +53,10 @@ class MySliverAppBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
             size: minDimension * 0.06,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => CartPage()));
+          },
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(

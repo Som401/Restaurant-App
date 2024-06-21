@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/models/user.dart';
-import 'package:frontend/providers/user_provider.dart'; 
+import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/services/user_services.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +31,7 @@ class AuthPage extends StatelessWidget {
                       Provider.of<UserProvider>(context, listen: false)
                           .setUser(userSnapshot.data!);
                     });
-                    return HomePage();
+                    return const HomePage();
                   } else {
                     return const Text("User data not found.");
                   }
