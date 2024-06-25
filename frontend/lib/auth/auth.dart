@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 class AuthPage extends StatelessWidget {
   AuthPage({super.key});
   final UserService _userService = UserService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +18,7 @@ class AuthPage extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var userUid = snapshot.data!.uid;
+            print("User logged in: $userUid");
             return ChangeNotifierProvider<UserProvider>(
               create: (_) => UserProvider(),
               child: FutureBuilder<User?>(

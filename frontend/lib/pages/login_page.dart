@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/sign_up_page.dart';
@@ -34,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       try {
         await _userService.login(
             context, emailController.text, passwordController.text);
-        if(context.mounted) {
+        if (context.mounted) {
           Navigator.pop(context);
         }
       } on FirebaseAuthException catch (e) {
@@ -51,6 +53,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final minDimension = min(width, height);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
@@ -62,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                 'Welcome Back!',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: width * 0.08,
+                  fontSize: minDimension * 0.07,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -72,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 'Please login to your account',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: width * 0.03,
+                  fontSize: minDimension * 0.04,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -86,11 +90,12 @@ class _LoginPageState extends State<LoginPage> {
                       controller: emailController,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Email',
                         hintStyle: TextStyle(
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                             color: Theme.of(context).colorScheme.secondary),
                         filled: true,
                         fillColor: Theme.of(context).colorScheme.tertiary,
@@ -120,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: passwordVisible,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: width * 0.05,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Password',
@@ -155,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: Theme.of(context).colorScheme.secondary,
-                              size: width * 0.06,
+                              size: minDimension * 0.06,
                             ),
                             onPressed: () {
                               setState(() {
@@ -186,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                           backgroundColor:
                               Theme.of(context).colorScheme.inversePrimary,
                           padding: EdgeInsets.all(width * 0.05),
-                          textStyle: TextStyle(fontSize: width * 0.05),
+                          textStyle: TextStyle(fontSize: minDimension * 0.05),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
@@ -195,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                           'Login',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                           ),
                         ),
                       ),
@@ -210,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
                       label: Text('Login with google',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                           )),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide.none,
@@ -227,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                           "Don't have an account?",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.03,
+                            fontSize: minDimension * 0.03,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -243,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(
                               color:
                                   Theme.of(context).colorScheme.inverseSurface,
-                              fontSize: width * 0.03,
+                              fontSize: minDimension * 0.03,
                             ),
                             textAlign: TextAlign.center,
                           ),

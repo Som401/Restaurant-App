@@ -65,6 +65,7 @@ class _FoodPageState extends State<FoodPage> {
                       style: TextStyle(
                         fontSize: minDimension * 0.05,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
                       )),
                   Text(
                     '${widget.food.price} DT',

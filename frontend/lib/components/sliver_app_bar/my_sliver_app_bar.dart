@@ -21,11 +21,12 @@ class MySliverAppBar extends StatelessWidget {
     final minDimension = min(width, height);
 
     return SliverAppBar(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      toolbarHeight: minDimension * 0.1,
+      backgroundColor: Theme.of(context).colorScheme.inverseSurface,
       elevation: 0,
       scrolledUnderElevation: 0,
-      expandedHeight: minDimension * 0.8,
-      collapsedHeight: minDimension * 0.6,
+      expandedHeight: minDimension * 0.7,
+      collapsedHeight: minDimension * 0.55,
       pinned: true,
       floating: true,
       leading: IconButton(

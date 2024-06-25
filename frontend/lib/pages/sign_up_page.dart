@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/login_page.dart';
@@ -63,14 +65,14 @@ class _SignUpPageState extends State<SignUpPage> {
                       )),
               (Route route) => false);
         } on FirebaseAuthException catch (e) {
-          Navigator.pop(context); 
+          Navigator.pop(context);
           showDialog(
             context: context,
             builder: (context) =>
                 AlertDialog(content: Text(e.message ?? "An error occurred")),
           );
         } catch (e) {
-          Navigator.pop(context); 
+          Navigator.pop(context);
           showDialog(
             context: context,
             builder: (context) =>
@@ -85,6 +87,8 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final minDimension = min(width, height);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
@@ -96,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 'Create a new account',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: width * 0.08,
+                  fontSize: minDimension * 0.08,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -106,7 +110,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 'Please fill in the form to continue',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: width * 0.03,
+                  fontSize: minDimension * 0.03,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -120,11 +124,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: fullNameController,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Full Name',
                         hintStyle: TextStyle(
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                             color: Theme.of(context).colorScheme.secondary),
                         filled: true,
                         fillColor: Theme.of(context).colorScheme.tertiary,
@@ -153,11 +158,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: emailController,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Email',
                         hintStyle: TextStyle(
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                             color: Theme.of(context).colorScheme.secondary),
                         filled: true,
                         fillColor: Theme.of(context).colorScheme.tertiary,
@@ -187,11 +193,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       keyboardType: TextInputType.number,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Phone Number',
                         hintStyle: TextStyle(
-                          fontSize: width * 0.05,
+                          fontSize: minDimension * 0.05,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                         filled: true,
@@ -222,7 +229,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       obscureText: passwordVisible,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: width * 0.05,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Password',
@@ -256,7 +263,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: Theme.of(context).colorScheme.secondary,
-                              size: width * 0.06,
+                              size: minDimension * 0.06,
                             ),
                             onPressed: () {
                               setState(() {
@@ -273,7 +280,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       obscureText: confirmPasswordVisible,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: width * 0.05,
+                        fontSize: minDimension * 0.05,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Confirm Password',
@@ -307,7 +314,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: Theme.of(context).colorScheme.secondary,
-                              size: width * 0.06,
+                              size: minDimension * 0.06,
                             ),
                             onPressed: () {
                               setState(() {
@@ -339,7 +346,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           backgroundColor:
                               Theme.of(context).colorScheme.inversePrimary,
                           padding: EdgeInsets.all(width * 0.05),
-                          textStyle: TextStyle(fontSize: width * 0.05),
+                          textStyle: TextStyle(fontSize: minDimension * 0.05),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
@@ -348,7 +355,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           'Sign In',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                           ),
                         ),
                       ),
@@ -363,7 +370,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       label: Text('Sign in with google',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.05,
+                            fontSize: minDimension * 0.05,
                           )),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide.none,
@@ -380,7 +387,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           "Have an account?",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: width * 0.03,
+                            fontSize: minDimension * 0.03,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -396,7 +403,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             style: TextStyle(
                               color:
                                   Theme.of(context).colorScheme.inverseSurface,
-                              fontSize: width * 0.03,
+                              fontSize: minDimension * 0.03,
                             ),
                             textAlign: TextAlign.center,
                           ),

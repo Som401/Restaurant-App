@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/restaurant.dart';
-import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/splash_screen_page.dart';
 import 'package:frontend/providers/theme_provider.dart';
 import 'package:frontend/providers/user_provider.dart';

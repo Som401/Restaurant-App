@@ -3,21 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/food_components/cart_tile.dart';
 import 'package:frontend/components/food_components/payment_details.dart';
-import 'package:frontend/components/inputs/my_text_field.dart';
+import 'package:frontend/pages/checkout_page.dart';
 import 'package:frontend/providers/user_provider.dart';
-import 'package:frontend/services/restaurant_services.dart';
 import 'package:provider/provider.dart';
 
 class CartPage extends StatelessWidget {
-  final TextEditingController notesController = TextEditingController();
-  CartPage({super.key});
+  const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-    RestaurantServices restaurantServices = RestaurantServices();
 
     return Consumer<UserProvider>(builder: ((context, user, child) {
       final userCart = user.cart;
@@ -35,12 +32,10 @@ class CartPage extends StatelessWidget {
           ),
           centerTitle: true,
           foregroundColor: Theme.of(context).colorScheme.primary,
-          leading: Navigator.canPop(context)
-              ? IconButton(
-                  icon: Icon(Icons.arrow_back, size: minDimension * 0.08),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              : null,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, size: minDimension * 0.08),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -93,64 +88,44 @@ class CartPage extends StatelessWidget {
                                   ))))
                       : Expanded(
                           child: ListView.builder(
-                              itemCount: userCart.length + 1,
+                              itemCount: userCart.length,
                               itemBuilder: (context, index) {
-                                if (index < userCart.length) {
-                                  final cartItem = userCart[index];
-                                  return MyCartTile(cartItem: cartItem);
-                                } else {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: width * 0.05,
-                                        vertical: height * 0.02),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Order Notes",
-                                            style: TextStyle(
-                                                fontSize: minDimension * 0.05,
-                                                fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary)),
-                                        SizedBox(height: height * 0.01),
-                                        MyTextField(
-                                          hintText:
-                                              "Enter your order notes here...",
-                                          controller: notesController,
-                                          multiline: 4,
-                                        ),
-                                        SizedBox(height: height * 0.01),
-                                      ],
-                                    ),
-                                  );
-                                }
+                                final cartItem = userCart[index];
+                                return MyCartTile(cartItem: cartItem);
                               }))
                 ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                userCart.isEmpty
-                    ? Container()
-                    : PaymentDetails(
-                        isDeliveryFee: true,
-                        subtotal: user.getTotalPrice(),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.05, vertical: height*0.02),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  userCart.isEmpty
+                      ? Container()
+                      : PaymentDetails(
+                          isDeliveryFee: true,
+                          subtotal: user.getTotalPrice(),
+                        ),
+                  MyButton(
+                      text: "Go to checkout",
+                      onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CheckoutPage(),
+                            ),
+                          )
+                      // onTap: () {
+                      //   restaurantServices.addOrder(
+                      //       userProvider: user,
+                      //       address: "",
+                      //       notes: notesController.text
+                      //       );
+                      // }
                       ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: minDimension * 0.05,
-                      vertical: minDimension * 0.02),
-                  child: MyButton(text: "Send Order", onTap: () {
-                    restaurantServices.addOrder(
-                        userProvider: user,
-                        address: "",
-                        notes: notesController.text);
-                  }),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

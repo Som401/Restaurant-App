@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/components/drawer/my_drawer.dart';
 import 'package:frontend/components/food_components/food_tile.dart';
 import 'package:frontend/components/search_box/search_box.dart';
@@ -61,7 +59,7 @@ class _HomePageState extends State<HomePage>
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
               child: Container(
                 margin: EdgeInsets.only(
-                    top: minDimension * 0.15, bottom: minDimension * 0.05),
+                    top: minDimension * 0.1, bottom: minDimension * 0.05),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +80,7 @@ class _HomePageState extends State<HomePage>
             ),
             title: Container(
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.inversePrimary,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -127,14 +125,13 @@ List<Widget> getFoodInThisCategory(List<Food> fullMenu) {
       itemBuilder: (context, index) {
         final food = categoryMenu[index];
         return FoodTile(
-          food: food,
-          onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FoodPage(food: food),
-                ),
-              )
-        );
+            food: food,
+            onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FoodPage(food: food),
+                  ),
+                ));
       },
     );
   }).toList();
