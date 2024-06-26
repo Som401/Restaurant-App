@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/food_components/payment_details.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
@@ -18,6 +17,24 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   bool isDelivery = false;
+  final TextEditingController notesController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+
+  void toggleDeliveryOption() {
+    setState(() {
+      isDelivery = !isDelivery;
+      if (!isDelivery) {
+        addressController.clear();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    notesController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +43,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final minDimension = min(width, height);
 
     RestaurantServices restaurantServices = RestaurantServices();
-    final TextEditingController notesController = TextEditingController();
 
     return Consumer<UserProvider>(builder: ((context, user, child) {
       return Scaffold(
@@ -63,10 +79,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           children: [
                             Text("Order Notes",
                                 style: TextStyle(
-                                    
                                     fontSize: minDimension * 0.05,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary)),
+                                    color:
+                                        Theme.of(context).colorScheme.primary)),
                           ],
                         ),
                         SizedBox(height: height * 0.01),
@@ -89,15 +105,19 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               scale: minDimension * 0.0025,
                               child: Checkbox(
                                 value: isDelivery,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    isDelivery = value!;
-                                  });
-                                },
+                                onChanged: (value) => toggleDeliveryOption(),
                               ),
                             )
                           ],
                         ),
+                        if (isDelivery) ...[
+                          SizedBox(height: height * 0.01),
+                          MyTextField(
+                            hintText: "Enter your address here...",
+                            controller: addressController,
+                          ),
+                          SizedBox(height: height * 0.01),
+                        ]
                       ],
                     ),
                   ),

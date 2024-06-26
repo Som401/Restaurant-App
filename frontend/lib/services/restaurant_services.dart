@@ -30,6 +30,7 @@ class RestaurantServices {
         };
       }).toList(),
       'timestamp': FieldValue.serverTimestamp(),
+      'state': 'pending',
     };
 
     try {
@@ -39,6 +40,28 @@ class RestaurantServices {
     } catch (e) {
       print("Failed to add order: $e");
       throw Exception("Failed to add order");
+    }
+  }
+
+  Future<List<dynamic>> fetchUserOrders() async {
+    final String userId = _auth.currentUser?.uid ?? 'anonymous';
+
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('orders')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      List<dynamic> orders = [];
+      for (var doc in querySnapshot.docs) {
+        var order = doc.data();
+        orders.add(order);
+      }
+      return orders;
+    } catch (e) {
+      print("Failed to fetch orders: $e");
+
+      throw Exception("Failed to fetch orders: $e");
     }
   }
 }

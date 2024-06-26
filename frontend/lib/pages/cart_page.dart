@@ -98,32 +98,41 @@ class CartPage extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.05, vertical: height*0.02),
+                  horizontal: width * 0.05, vertical: height * 0.02),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   userCart.isEmpty
                       ? Container()
                       : PaymentDetails(
-                          isDeliveryFee: true,
+                          isDeliveryFee: false,
                           subtotal: user.getTotalPrice(),
                         ),
                   MyButton(
-                      text: "Go to checkout",
-                      onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CheckoutPage(),
+                    text: "Go to checkout",
+                    onTap: () {
+                      if (userCart.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CheckoutPage(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: const Duration(milliseconds: 1500),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.inversePrimary,
+                            content: Text(
+                              'Your cart is empty!',
+                              style: TextStyle(fontSize: minDimension * 0.04),
                             ),
-                          )
-                      // onTap: () {
-                      //   restaurantServices.addOrder(
-                      //       userProvider: user,
-                      //       address: "",
-                      //       notes: notesController.text
-                      //       );
-                      // }
-                      ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ],
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/auth/auth.dart';
 import 'package:frontend/components/drawer/my_drawer_tile.dart';
 import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/pages/orders_page.dart';
 import 'package:frontend/pages/settings_page.dart';
 import 'package:frontend/providers/theme_provider.dart';
 import 'package:frontend/services/user_services.dart';
@@ -51,7 +52,8 @@ class MyDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => HomePage()),
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
                         (Route route) => false);
                   },
                 ),
@@ -63,7 +65,13 @@ class MyDrawer extends StatelessWidget {
                 MyDrawerTile(
                   text: "C A R T",
                   icon: Icons.shopping_cart,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const OrdersPage()),
+                        (Route route) => false);
+                  },
                 ),
                 MyDrawerTile(
                   //key: settingsTileKey,

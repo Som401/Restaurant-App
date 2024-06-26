@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage>
             ),
             title: Container(
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Theme.of(context).colorScheme.background,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
