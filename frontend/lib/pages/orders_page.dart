@@ -2,7 +2,10 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/components/appBar/my_app_bar.dart';
+import 'package:frontend/components/drawer/my_drawer.dart';
 import 'package:frontend/components/food_components/order_tile.dart';
+import 'package:frontend/components/food_components/shimmer_item.dart'; // Import ShimmerItem
 import 'package:frontend/services/restaurant_services.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -16,14 +19,16 @@ class _OrdersPageState extends State<OrdersPage> {
   bool active = true;
 
   late Future<List<dynamic>> futureOrders;
-  late RestaurantServices restaurantServices; // Declare RestaurantServices
+  late RestaurantServices restaurantServices;
 
   @override
   void initState() {
     super.initState();
-    restaurantServices = RestaurantServices(); // Initialize RestaurantServices
-    futureOrders = restaurantServices.fetchUserOrders(); // Fetch user orders
+    restaurantServices = RestaurantServices();
+    futureOrders = restaurantServices.fetchUserOrders();
   }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,111 +40,24 @@ class _OrdersPageState extends State<OrdersPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
+              key: _scaffoldKey,
+              drawer: const MyDrawer(),
               backgroundColor: Theme.of(context).colorScheme.background,
-              appBar: AppBar(
-                title: Text("Your Orders",
-                    style: TextStyle(
-                      fontSize: minDimension * 0.05,
-                      color: Theme.of(context).colorScheme.primary,
-                    )),
-                elevation: 0,
-                centerTitle: true,
-                foregroundColor: Theme.of(context).colorScheme.primary,
+              appBar: MyAppBar(
+                title: "Your Orders",
+                scaffoldKey: _scaffoldKey,
               ),
-              body: Column(children: [
-                Expanded(
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding:
-                            const EdgeInsets.only(top: 30, left: 10, right: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(40),
-                              topRight: Radius.circular(40)),
-                          color: Theme.of(context).colorScheme.inverseSurface,
-                        ),
+              body: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.05, vertical: height * 0.02),
+                child: Column(
+                  children: [
+                    Expanded(
                         child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const SizedBox(width: 15),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      active = true;
-                                    });
-                                  },
-                                  child: Text(
-                                    'Today',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: active
-                                            ? FontWeight.bold
-                                            : FontWeight.normal),
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      active = false;
-                                    });
-                                  },
-                                  child: Text(
-                                    'Past',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: !active
-                                            ? FontWeight.bold
-                                            : FontWeight.normal),
-                                  ),
-                                ),
-                                const SizedBox(height: 30),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.background,
-                              )),
-                            ),
-                          ],
-                        )))
-              ]));
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        } else {
-          return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            appBar: AppBar(
-              title: const Text("Your Orders",
-                  style: TextStyle(
-                    color: Colors.white,
-                  )),
-              elevation: 0,
-              centerTitle: true,
-              backgroundColor: Colors.transparent,
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding:
-                        const EdgeInsets.only(top: 30, left: 10, right: 10),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(40),
-                            topRight: Radius.circular(40)),
-                        color: Colors.white),
-                    child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SizedBox(width: 15),
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -149,13 +67,13 @@ class _OrdersPageState extends State<OrdersPage> {
                               child: Text(
                                 'Today',
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: minDimension * 0.04,
                                     fontWeight: active
                                         ? FontWeight.bold
                                         : FontWeight.normal),
                               ),
                             ),
-                            const SizedBox(width: 20),
+                            SizedBox(width: width * 0.03),
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -165,13 +83,81 @@ class _OrdersPageState extends State<OrdersPage> {
                               child: Text(
                                 'Past',
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: minDimension * 0.04,
                                     fontWeight: !active
                                         ? FontWeight.bold
                                         : FontWeight.normal),
                               ),
                             ),
-                            const SizedBox(height: 30),
+                            SizedBox(height: height * 0.03),
+                          ],
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: 4,
+                            itemBuilder: (context, index) =>
+                                const ShimmerItem(),
+                          ),
+                        ),
+                      ],
+                    )),
+                  ],
+                ),
+              ));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        } else {
+          return Scaffold(
+            key: _scaffoldKey,
+            drawer: const MyDrawer(),
+            backgroundColor: Theme.of(context).colorScheme.background,
+            appBar: MyAppBar(
+              title: "Your Orders",
+              scaffoldKey: _scaffoldKey,
+            ),
+            body: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.05, vertical: height * 0.02),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  active = true;
+                                });
+                              },
+                              child: Text(
+                                'Today',
+                                style: TextStyle(
+                                    fontSize: minDimension * 0.04,
+                                    fontWeight: active
+                                        ? FontWeight.bold
+                                        : FontWeight.normal),
+                              ),
+                            ),
+                            SizedBox(width: width * 0.03),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  active = false;
+                                });
+                              },
+                              child: Text(
+                                'Past',
+                                style: TextStyle(
+                                    fontSize: minDimension * 0.04,
+                                    fontWeight: !active
+                                        ? FontWeight.bold
+                                        : FontWeight.normal),
+                              ),
+                            ),
+                            SizedBox(height: height * 0.03),
                           ],
                         ),
                         Expanded(
@@ -181,7 +167,6 @@ class _OrdersPageState extends State<OrdersPage> {
                                       order['timestamp'] as Timestamp;
 
                                   final DateTime orderDate = timestamp.toDate();
-                                  print(orderDate);
                                   final now = DateTime.now();
                                   if (active) {
                                     return orderDate.year == now.year &&
@@ -229,8 +214,8 @@ class _OrdersPageState extends State<OrdersPage> {
                       ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }

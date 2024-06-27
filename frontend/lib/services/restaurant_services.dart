@@ -18,15 +18,16 @@ class RestaurantServices {
 
     Map<String, dynamic> order = {
       'userId': userId,
-      'totalPrice': userProvider.getTotalPrice().toStringAsFixed(2),
+      'isDelivery': address.isNotEmpty,
       'address': address.isEmpty ? 'no_delivery' : address,
       'notes': notes,
       'items': userProvider.cart.map((cartItem) {
         return {
           'food': cartItem.food.name,
-          'quantity': cartItem.quantity,
           'selectedAddons':
               cartItem.selectedAddons.map((addon) => addon.name).toList(),
+          'quantity': cartItem.quantity,
+          'price': cartItem.totalPrice,
         };
       }).toList(),
       'timestamp': FieldValue.serverTimestamp(),
@@ -57,6 +58,8 @@ class RestaurantServices {
         var order = doc.data();
         orders.add(order);
       }
+      await Future.delayed(const Duration(seconds: 2));
+
       return orders;
     } catch (e) {
       print("Failed to fetch orders: $e");

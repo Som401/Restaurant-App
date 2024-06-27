@@ -1,25 +1,23 @@
-
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class OrderTile extends StatelessWidget {
   final Map<String, dynamic> order;
   const OrderTile({super.key, required this.order});
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     final Timestamp timestamp = order['timestamp'] as Timestamp;
-    print('order tile build ${timestamp}');
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
+      padding: EdgeInsets.symmetric(vertical: height * 0.02),
       child: Card(
         elevation: 0,
         color: Theme.of(context).colorScheme.tertiary,
@@ -27,54 +25,61 @@ class OrderTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
-          padding: EdgeInsets.all(minDimension * 0.01),
+          padding: EdgeInsets.symmetric(
+              horizontal: width * 0.02, vertical: height * 0.02),
           child: Stack(children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: minDimension * 0.01),
-                      child: DottedBorder(
-                        borderType: BorderType.RRect,
-                        dashPattern: const [4, 4],
-                        radius: const Radius.circular(8),
-                        padding: const EdgeInsets.all(7),
+                    DottedBorder(
+                      borderType: BorderType.RRect,
+                      dashPattern: [
+                        4 * (minDimension / 500),
+                        4 * (minDimension / 500)
+                      ], // Adjusted based on screen size
+                      radius: Radius.circular(8 *
+                          (minDimension /
+                              500)), // Adjusted based on screen size
+                      padding: EdgeInsets.all(7 *
+                          (minDimension /
+                              500)), // Adjusted based on screen size
+                      color: order['state'] == 'accepted' ||
+                              order['state'] == 'complete'
+                          ? Colors.green
+                          : (order['state'] == 'denied'
+                              ? Colors.red
+                              : Colors.orange),
+                      child: Icon(
+                        size: minDimension *
+                            0.05, // Adjusted based on screen size
+                        order['state'] == 'accepted' ||
+                                order['state'] == 'complete'
+                            ? Icons.check_circle
+                            : (order['state'] == 'denied'
+                                ? Icons.error
+                                : Icons.access_time),
                         color: order['state'] == 'accepted' ||
                                 order['state'] == 'complete'
                             ? Colors.green
                             : (order['state'] == 'denied'
                                 ? Colors.red
                                 : Colors.orange),
-                        child: Icon(
-                          order['state'] == 'accepted' ||
-                                  order['state'] == 'complete'
-                              ? Icons.check_circle
-                              : (order['state'] == 'denied'
-                                  ? Icons.error
-                                  : Icons.access_time),
-                          color: order['state'] == 'accepted' ||
-                                  order['state'] == 'complete'
-                              ? Colors.green
-                              : (order['state'] == 'denied'
-                                  ? Colors.red
-                                  : Colors.orange),
-                        ),
                       ),
                     ),
+                    SizedBox(width: width * 0.01),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('',
+                        Text('Order Number: #105',
                             // 'Order Number: #${order['orderNumber']}',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: minDimension * 0.05,
                             )),
                         Text(
-                          'Order on: ${DateFormat('yyyy-MM-dd - HH:mm:ss').format(timestamp.toDate())}',
+                          'Order on: ${DateFormat('yyyy-MM-dd - HH:mm').format(timestamp.toDate())}',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: minDimension * 0.05,
@@ -119,6 +124,11 @@ class OrderTile extends StatelessWidget {
                 ),
               ],
             ),
+            // Positioned(
+            //   top: 0,
+            //   left: 0,
+            //   child:
+            // ),
             Positioned(
               top: 0,
               right: 0,
@@ -130,10 +140,12 @@ class OrderTile extends StatelessWidget {
                       return AlertDialog(
                         title: const Text('Receipt'),
                         titleTextStyle: TextStyle(
-                          fontSize: minDimension * 0.05,
+                          fontSize: minDimension *
+                              0.05, // Adjusted based on screen size
                           color: Theme.of(context).colorScheme.primary,
                         ),
-                        content: Text(displaycartReceipt(order)),
+                        content: Text(displaycartReceipt(order,
+                            minDimension)), // Pass minDimension to adjust text size
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -141,7 +153,8 @@ class OrderTile extends StatelessWidget {
                             },
                             child: Text('Close',
                                 style: TextStyle(
-                                  fontSize: minDimension * 0.05,
+                                  fontSize: minDimension *
+                                      0.05, // Adjusted based on screen size
                                   color:
                                       Theme.of(context).colorScheme.background,
                                 )),
@@ -177,21 +190,18 @@ int calculateTotalItems(List<dynamic> items) {
 double calculateTotalCost(List<dynamic> items) {
   double totalCost = 0;
   for (var item in items) {
-    totalCost += item['totalPrice'];
+    totalCost += item['price'];
   }
   return totalCost;
 }
 
-String displaycartReceipt(Map<String, dynamic> order) {
+String displaycartReceipt(Map<String, dynamic> order, double minDimension) {
   final receipt = StringBuffer();
   receipt.writeln("Here's your receipt.");
   receipt.writeln();
-  final Timestamp timestamp = order['timestamp'] as Timestamp;
+  final DateTime dateTime = order['timestamp'].toDate();
 
-  String formattedDate =
-      DateFormat('yyyy-MM-dd - HH:mm:ss').format(order['timestamp']);
-  print('order tile function  ${timestamp}');
-  print('order tile function  ${formattedDate}');
+  String formattedDate = DateFormat('yyyy-MM-dd - HH:mm').format(dateTime);
 
   receipt.writeln(formattedDate);
   receipt.writeln();
@@ -201,10 +211,10 @@ String displaycartReceipt(Map<String, dynamic> order) {
 
   for (final cartItem in cartItems) {
     receipt.writeln(
-        "${cartItem['quantity']} x ${cartItem['food']['name']} - \$ ${cartItem['totalPrice']}");
+        "${cartItem['quantity']} x ${cartItem['food']} - \$ ${cartItem['price']}");
+
     if (cartItem['selectedAddons'].isNotEmpty) {
-      String addons =
-          cartItem['selectedAddons'].map((addon) => addon['name']).join(', ');
+      String addons = cartItem['selectedAddons'].join(', ');
       receipt.writeln("Add-ons: $addons");
     }
     receipt.writeln();
@@ -214,7 +224,6 @@ String displaycartReceipt(Map<String, dynamic> order) {
 
   int totalItems = calculateTotalItems(cartItems);
   double totalPrice = calculateTotalCost(cartItems);
-
   receipt.writeln("Total Items: $totalItems");
   receipt.writeln("Total Price: \$ $totalPrice");
 

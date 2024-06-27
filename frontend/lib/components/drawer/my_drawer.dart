@@ -102,24 +102,4 @@ class MyDrawer extends StatelessWidget {
       ),
     );
   }
-//  final GlobalKey settingsTileKey = GlobalKey();
-//     WidgetsBinding.instance.addPostFrameCallback(
-//         (_) => calculateSettingsTilePosition(context, settingsTileKey));
-// void calculateSettingsTilePosition(BuildContext context, GlobalKey key) {
-//   // Check if the widget is rendered
-//   if (key.currentContext != null) {
-//     final RenderBox? renderBox = key.currentContext!.findRenderObject() as RenderBox?;
-//     if (renderBox != null && renderBox.attached) {
-//       final position = renderBox.localToGlobal(Offset.zero);
-//       final screenHeight = MediaQuery.of(context).size.height;
-//       final positionFromTop = position.dy;
-
-//       final percentage = (positionFromTop / screenHeight) * 100;
-
-//       print("Settings Tile is $percentage% from the top of the screen.");
-//     } else {
-//       print("Settings Tile is not currently rendered.");
-//     }
-//   }
-// }
 }

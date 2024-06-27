@@ -131,8 +131,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     onTap: () {
                       restaurantServices.addOrder(
                           userProvider: user,
-                          address: "",
+                          address: addressController.text,
                           notes: notesController.text);
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     }),
               ],
             ),

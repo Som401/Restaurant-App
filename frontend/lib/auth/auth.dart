@@ -18,7 +18,6 @@ class AuthPage extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var userUid = snapshot.data!.uid;
-            print("User logged in: $userUid");
             return ChangeNotifierProvider<UserProvider>(
               create: (_) => UserProvider(),
               child: FutureBuilder<User?>(
