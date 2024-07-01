@@ -21,8 +21,11 @@ class Food {
       description: json['description'],
       imagePath: json['imagePath'],
       price: json['price'],
-      category: FoodCategory.values.firstWhere((e) => e.toString() == 'FoodCategory.${json['category']}'),
-      availableAddons: (json['availableAddons'] as List).map((i) => Addon.fromJson(i)).toList(),
+      category: FoodCategory.values.firstWhere(
+          (e) => e.toString() == 'FoodCategory.${json['category']}'),
+      availableAddons: (json['availableAddons'] as List)
+          .map((i) => Addon.fromJson(i))
+          .toList(),
     );
   }
 
@@ -33,7 +36,8 @@ class Food {
       'imagePath': imagePath,
       'price': price,
       'category': category.toString().split('.').last,
-      'availableAddons': availableAddons.map((addon) => addon.toJson()).toList(),
+      'availableAddons':
+          availableAddons.map((addon) => addon.toJson()).toList(),
     };
   }
 }
@@ -46,7 +50,7 @@ enum FoodCategory {
   salad,
   sides,
   dessert,
-  drinks,    
+  drinks,
 }
 
 class Addon {

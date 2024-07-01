@@ -16,7 +16,7 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
-  bool active = true;
+  bool allOrders = true;
 
   late Future<List<dynamic>> futureOrders;
   late RestaurantServices restaurantServices;
@@ -61,14 +61,14 @@ class _OrdersPageState extends State<OrdersPage> {
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  active = true;
+                                  allOrders = true;
                                 });
                               },
                               child: Text(
-                                'Today',
+                                'All Orders',
                                 style: TextStyle(
                                     fontSize: minDimension * 0.04,
-                                    fontWeight: active
+                                    fontWeight: allOrders
                                         ? FontWeight.bold
                                         : FontWeight.normal),
                               ),
@@ -77,14 +77,14 @@ class _OrdersPageState extends State<OrdersPage> {
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  active = false;
+                                  allOrders = false;
                                 });
                               },
                               child: Text(
-                                'Past',
+                                'Today Orders',
                                 style: TextStyle(
                                     fontSize: minDimension * 0.04,
-                                    fontWeight: !active
+                                    fontWeight: !allOrders
                                         ? FontWeight.bold
                                         : FontWeight.normal),
                               ),
@@ -129,14 +129,14 @@ class _OrdersPageState extends State<OrdersPage> {
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  active = true;
+                                  allOrders = true;
                                 });
                               },
                               child: Text(
-                                'Today',
+                                'All Orders',
                                 style: TextStyle(
                                     fontSize: minDimension * 0.04,
-                                    fontWeight: active
+                                    fontWeight: allOrders
                                         ? FontWeight.bold
                                         : FontWeight.normal),
                               ),
@@ -145,14 +145,14 @@ class _OrdersPageState extends State<OrdersPage> {
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  active = false;
+                                  allOrders = false;
                                 });
                               },
                               child: Text(
-                                'Past',
+                                'Today Orders',
                                 style: TextStyle(
                                     fontSize: minDimension * 0.04,
-                                    fontWeight: !active
+                                    fontWeight: !allOrders
                                         ? FontWeight.bold
                                         : FontWeight.normal),
                               ),
@@ -168,46 +168,40 @@ class _OrdersPageState extends State<OrdersPage> {
 
                                   final DateTime orderDate = timestamp.toDate();
                                   final now = DateTime.now();
-                                  if (active) {
+                                  if (!allOrders) {
                                     return orderDate.year == now.year &&
                                         orderDate.month == now.month &&
                                         orderDate.day == now.day;
                                   } else {
-                                    return orderDate.year < now.year ||
-                                        (orderDate.year == now.year &&
-                                            orderDate.month < now.month) ||
-                                        (orderDate.year == now.year &&
-                                            orderDate.month == now.month &&
-                                            orderDate.day < now.day);
+                                    return true;
                                   }
                                 }).length ??
                                 0,
                             itemBuilder: (context, index) {
-                              final orders = snapshot.data
-                                  ?.where((order) {
-                                    final Timestamp timestamp =
-                                        order['timestamp'] as Timestamp;
+                              final orders = snapshot.data!.where((order) {
+                                final Timestamp timestamp =
+                                    order['timestamp'] as Timestamp;
 
-                                    final DateTime orderDate =
-                                        timestamp.toDate();
-                                    final now = DateTime.now();
-                                    if (active) {
-                                      return orderDate.year == now.year &&
-                                          orderDate.month == now.month &&
-                                          orderDate.day == now.day;
-                                    } else {
-                                      return orderDate.year < now.year ||
-                                          (orderDate.year == now.year &&
-                                              orderDate.month < now.month) ||
-                                          (orderDate.year == now.year &&
-                                              orderDate.month == now.month &&
-                                              orderDate.day < now.day);
-                                    }
-                                  })
-                                  .toList()
-                                  .reversed
-                                  .toList();
-                              return OrderTile(order: orders?[index]);
+                                final DateTime orderDate = timestamp.toDate();
+                                final now = DateTime.now();
+                                if (!allOrders) {
+                                  return orderDate.year == now.year &&
+                                      orderDate.month == now.month &&
+                                      orderDate.day == now.day;
+                                } else {
+                                  return true;
+                                }
+                              }).toList()
+                                ..sort((a, b) {
+                                  final Timestamp timestampA =
+                                      a['timestamp'] as Timestamp;
+                                  final Timestamp timestampB =
+                                      b['timestamp'] as Timestamp;
+                                  return timestampB.toDate().compareTo(
+                                      timestampA
+                                          .toDate()); 
+                                });
+                              return OrderTile(order: orders[index]);
                             },
                           ),
                         ),

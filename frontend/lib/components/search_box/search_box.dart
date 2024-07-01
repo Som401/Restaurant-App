@@ -10,7 +10,7 @@ class SearchBox extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     return Container(
-      padding: EdgeInsets.symmetric(vertical: height * 0.02),
+      padding: EdgeInsets.only(bottom: height * 0.01),
       child: TextField(
         decoration: InputDecoration(
           hintText: "Search food",

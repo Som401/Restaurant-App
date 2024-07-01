@@ -19,7 +19,6 @@ class MySliverAppBar extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-
     return SliverAppBar(
       toolbarHeight: minDimension * 0.1,
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -56,7 +55,7 @@ class MySliverAppBar extends StatelessWidget {
           ),
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => CartPage()));
+                context, MaterialPageRoute(builder: (context) => const CartPage()));
           },
         ),
       ],

@@ -59,7 +59,6 @@ class RestaurantServices {
         orders.add(order);
       }
       await Future.delayed(const Duration(seconds: 2));
-
       return orders;
     } catch (e) {
       print("Failed to fetch orders: $e");

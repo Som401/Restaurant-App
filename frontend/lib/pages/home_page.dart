@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage>
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
               child: Container(
                 margin: EdgeInsets.only(
-                    top: minDimension * 0.1, bottom: minDimension * 0.05),
+                    top: minDimension * 0.15, bottom: minDimension * 0.05),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage>
           color: Theme.of(context).colorScheme.background,
           child: Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: width * 0.05, vertical: height * 0.02),
+                horizontal: width * 0.05),
             child: Consumer<Restaurant>(
               builder: (context, restaurant, child) {
                 return TabBarView(
