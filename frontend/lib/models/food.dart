@@ -3,7 +3,7 @@ class Food {
   final String description;
   final String imagePath;
   final double price;
-  final FoodCategory category;
+  final String category;
   List<Addon> availableAddons;
 
   Food({
@@ -21,8 +21,7 @@ class Food {
       description: json['description'],
       imagePath: json['imagePath'],
       price: json['price'],
-      category: FoodCategory.values.firstWhere(
-          (e) => e.toString() == 'FoodCategory.${json['category']}'),
+      category: json['category'],
       availableAddons: (json['availableAddons'] as List)
           .map((i) => Addon.fromJson(i))
           .toList(),
@@ -35,22 +34,11 @@ class Food {
       'description': description,
       'imagePath': imagePath,
       'price': price,
-      'category': category.toString().split('.').last,
+      'category': category,
       'availableAddons':
           availableAddons.map((addon) => addon.toJson()).toList(),
     };
   }
-}
-
-enum FoodCategory {
-  pizza,
-  meat,
-  pasta,
-  burger,
-  salad,
-  sides,
-  dessert,
-  drinks,
 }
 
 class Addon {

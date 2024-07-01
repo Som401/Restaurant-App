@@ -7,25 +7,45 @@ class MySliverAppBar extends StatelessWidget {
   final Widget background;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  const MySliverAppBar({
-    super.key,
-    required this.title,
-    required this.background,
-    required this.scaffoldKey,
-  });
+  const MySliverAppBar(
+      {super.key,
+      required this.title,
+      required this.background,
+      required this.scaffoldKey,
+      d});
+
+  double calculateTextsHeight(BuildContext context, double minDimension) {
+    final textStyle = TextStyle(
+      fontSize: minDimension * 0.06,
+      fontWeight: FontWeight.bold,
+    );
+    final textPainter = TextPainter(
+      text: TextSpan(text: "order tile text", style: textStyle),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
+    final height1 = textPainter.size.height;
+
+    final totalTextsHeight = height1 * 2;
+    return totalTextsHeight;
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final totalTextsHeight = calculateTextsHeight(context, minDimension);
+    final titleHeight = height * 0.05 + minDimension * 0.31;
+    double expandedHeight = totalTextsHeight + titleHeight + minDimension * 0.2;
+
     return SliverAppBar(
       toolbarHeight: minDimension * 0.1,
       backgroundColor: Theme.of(context).colorScheme.background,
       elevation: 0,
       scrolledUnderElevation: 0,
-      expandedHeight: minDimension * 0.7,
-      collapsedHeight: minDimension * 0.55,
+      expandedHeight: expandedHeight,
+      collapsedHeight: titleHeight + minDimension * 0.15,
       pinned: true,
       floating: true,
       leading: IconButton(
@@ -54,8 +74,8 @@ class MySliverAppBar extends StatelessWidget {
             size: minDimension * 0.06,
           ),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const CartPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const CartPage()));
           },
         ),
       ],

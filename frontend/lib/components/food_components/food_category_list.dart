@@ -1,79 +1,9 @@
-// import 'dart:math';
-
-// import 'package:flutter/material.dart';
-// import 'package:frontend/components/food_components/food_category_icon.dart';
-// import 'package:frontend/models/food.dart';
-
-// class CategoryTabBar extends StatefulWidget {
-//   final TabController tabController;
-
-//   const CategoryTabBar({super.key, required this.tabController});
-
-//   @override
-//   CategoryTabBarState createState() => CategoryTabBarState();
-// }
-
-// class CategoryTabBarState extends State<CategoryTabBar> {
-//   List<String> generateCategoryNames() {
-//     return FoodCategory.values.map((category) {
-//       return category.toString().split('.').last;
-//     }).toList();
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     widget.tabController.addListener(_setActiveTab);
-//   }
-
-//   @override
-//   void dispose() {
-//     widget.tabController.removeListener(_setActiveTab);
-//     super.dispose();
-//   }
-
-//   void _setActiveTab() {
-//     if (mounted) {
-//       setState(() {});
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final height = MediaQuery.of(context).size.height;
-//     final width = MediaQuery.of(context).size.width;
-//     final minDimension = min(width, height);
-//     final categories = generateCategoryNames();
-
-//     return SizedBox(
-//       height: minDimension * 0.25,
-//       child: ListView.builder(
-//         scrollDirection: Axis.horizontal,
-//         itemCount: categories.length,
-//         itemBuilder: (context, index) {
-//           return Padding(
-//             padding: EdgeInsets.only(right: minDimension * 0.04),
-//             child: GestureDetector(
-//               onTap: () {
-//                 widget.tabController.animateTo(index);
-//               },
-//               child: FoodCategoryIcon(
-//                 imagePath: "assets/images/food_logo/${categories[index]}.png",
-//                 categoryName: categories[index][0].toString().toUpperCase() +
-//                     categories[index].substring(1).toLowerCase(),
-//                 isSelected: widget.tabController.index == index,
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:frontend/components/food_components/food_category_icon.dart';
 import 'dart:math';
 import 'package:frontend/models/food.dart';
+import 'package:frontend/models/restaurant.dart';
+import 'package:provider/provider.dart';
 
 class CategoryTabBar extends StatefulWidget {
   final TabController tabController;
@@ -85,10 +15,13 @@ class CategoryTabBar extends StatefulWidget {
 }
 
 class CategoryTabBarState extends State<CategoryTabBar> {
-  List<String> generateCategoryNames() {
-    return FoodCategory.values.map((category) {
-      return category.toString().split('.').last;
-    }).toList();
+  Future<List<String>>? _categoriesFuture;
+
+  Future<List<String>> fetchCategories() async {
+    // Check if we already have fetched categories
+    // In a real app, this method would fetch data from a remote source
+    await Future.delayed(Duration(seconds: 2)); // Simulate network delay
+    return Provider.of<Restaurant>(context, listen: false).categories.toList();
   }
 
   List<Tab> generateTabs(List<String> categories, double minDimension) {
@@ -110,6 +43,7 @@ class CategoryTabBarState extends State<CategoryTabBar> {
   void initState() {
     super.initState();
     widget.tabController.addListener(_setActiveTab);
+    Provider.of<Restaurant>(context, listen: false).fetchCategories();
   }
 
   @override
@@ -129,7 +63,8 @@ class CategoryTabBarState extends State<CategoryTabBar> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-    final categories = generateCategoryNames();
+    final restaurant = Provider.of<Restaurant>(context);
+    final categories = restaurant.categories;
 
     return SizedBox(
       height: minDimension * 0.25,

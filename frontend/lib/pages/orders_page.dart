@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/components/appBar/my_app_bar.dart';
 import 'package:frontend/components/drawer/my_drawer.dart';
 import 'package:frontend/components/food_components/order_tile.dart';
-import 'package:frontend/components/food_components/shimmer_item.dart'; // Import ShimmerItem
+import 'package:frontend/components/food_components/order_shimmer_tile.dart'; // Import ShimmerItem
 import 'package:frontend/services/restaurant_services.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -96,7 +96,7 @@ class _OrdersPageState extends State<OrdersPage> {
                           child: ListView.builder(
                             itemCount: 4,
                             itemBuilder: (context, index) =>
-                                const ShimmerItem(),
+                                const OrderShimmerTile(),
                           ),
                         ),
                       ],

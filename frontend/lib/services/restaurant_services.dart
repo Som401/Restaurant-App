@@ -66,4 +66,27 @@ class RestaurantServices {
       throw Exception("Failed to fetch orders: $e");
     }
   }
+
+  Future<List<String>> fetchCategories() async {
+    print("fetchCategories");
+    try {
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('restaurants').get();
+      Set<String> categories = {};
+      for (var doc in querySnapshot.docs) {
+        print('doc: $doc');
+        var data = doc.data() as Map<String, dynamic>;
+        var docCategories =
+            List<String>.from(data['categories'] as List<dynamic>);
+
+        categories.addAll(docCategories);
+        print("categories: $categories");
+      }
+      await Future.delayed(const Duration(seconds: 2));
+      return categories.toList();
+    } catch (e) {
+      print("Failed to fetch categories: $e");
+      throw Exception("Failed to fetch categories: $e");
+    }
+  }
 }

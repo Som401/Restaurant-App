@@ -9,9 +9,15 @@ class SearchBox extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final dynamicHeight =
+        height * 0.02 * 2 + minDimension * 0.06 + height * 0.01;
     return Container(
       padding: EdgeInsets.only(bottom: height * 0.01),
+      height: dynamicHeight,
       child: TextField(
+        style: TextStyle(
+          fontSize: minDimension * 0.05,
+        ),
         decoration: InputDecoration(
           hintText: "Search food",
           hintStyle: TextStyle(
@@ -24,8 +30,7 @@ class SearchBox extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
           ),
           contentPadding: EdgeInsets.symmetric(
-              vertical: height * 0.02,
-              horizontal: width * 0.02), 
+              vertical: height * 0.02, horizontal: width * 0.02),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
             borderSide: BorderSide.none,
