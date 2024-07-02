@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:frontend/components/food_components/my_receipt.dart';
 import 'package:intl/intl.dart';
 
 class OrderTile extends StatelessWidget {
@@ -38,13 +39,9 @@ class OrderTile extends StatelessWidget {
                       dashPattern: [
                         4 * (minDimension / 500),
                         4 * (minDimension / 500)
-                      ], // Adjusted based on screen size
-                      radius: Radius.circular(8 *
-                          (minDimension /
-                              500)), // Adjusted based on screen size
-                      padding: EdgeInsets.all(7 *
-                          (minDimension /
-                              500)), // Adjusted based on screen size
+                      ],
+                      radius: Radius.circular(8 * (minDimension / 500)),
+                      padding: EdgeInsets.all(7 * (minDimension / 500)),
                       color: order['state'] == 'accepted' ||
                               order['state'] == 'complete'
                           ? Colors.green
@@ -52,8 +49,7 @@ class OrderTile extends StatelessWidget {
                               ? Colors.red
                               : Colors.orange),
                       child: Icon(
-                        size: minDimension *
-                            0.05, // Adjusted based on screen size
+                        size: minDimension * 0.05,
                         order['state'] == 'accepted' ||
                                 order['state'] == 'complete'
                             ? Icons.check_circle
@@ -99,11 +95,28 @@ class OrderTile extends StatelessWidget {
                           color: Theme.of(context).colorScheme.secondary,
                           fontSize: minDimension * 0.05,
                         )),
-                    Text('\$ ${calculateTotalCost(order['items'])}',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.05,
-                        )),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: calculateTotalCost(order['items'])
+                                .toStringAsFixed(2),
+                            style: TextStyle(
+                              fontSize: minDimension * 0.05,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' DT',
+                            style: TextStyle(
+                              fontSize: minDimension * 0.05,
+                              color:
+                                  Theme.of(context).colorScheme.inverseSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: height * 0.01),
@@ -124,11 +137,6 @@ class OrderTile extends StatelessWidget {
                 ),
               ],
             ),
-            // Positioned(
-            //   top: 0,
-            //   left: 0,
-            //   child:
-            // ),
             Positioned(
               top: 0,
               right: 0,
@@ -138,14 +146,11 @@ class OrderTile extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Receipt'),
-                        titleTextStyle: TextStyle(
-                          fontSize: minDimension *
-                              0.05, // Adjusted based on screen size
-                          color: Theme.of(context).colorScheme.primary,
+                        content: MyReceipt(
+                          order: order,
                         ),
-                        content: Text(displaycartReceipt(order,
-                            minDimension)), // Pass minDimension to adjust text size
+                        // content: Text(displaycartReceipt(order,
+                        //     minDimension)),
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -153,8 +158,7 @@ class OrderTile extends StatelessWidget {
                             },
                             child: Text('Close',
                                 style: TextStyle(
-                                  fontSize: minDimension *
-                                      0.05, // Adjusted based on screen size
+                                  fontSize: minDimension * 0.05,
                                   color:
                                       Theme.of(context).colorScheme.background,
                                 )),

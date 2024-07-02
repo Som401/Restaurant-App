@@ -31,37 +31,47 @@ class FoodCategoryShimmer extends StatelessWidget {
 
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) => SizedBox(
-        height: minDimension * 0.25, // Adjust height if necessary
+        height: minDimension * 0.25,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: 8, // Generate 8 items
+          itemCount: 8,
           itemBuilder: (context, index) => Container(
-            width: minDimension * 0.2, // Adjust width for each item
+            width: minDimension * 0.2,
             padding: EdgeInsets.symmetric(horizontal: minDimension * 0.01),
             child: Column(
               children: [
                 Shimmer.fromColors(
-                  baseColor: themeProvider.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
-                  highlightColor: themeProvider.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                  baseColor: themeProvider.isDarkMode
+                      ? Colors.grey.shade900
+                      : Colors.grey.shade300,
+                  highlightColor: themeProvider.isDarkMode
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade200,
                   child: Container(
                     width: minDimension * 0.11,
                     height: minDimension * 0.11,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: themeProvider.isDarkMode ? Colors.grey : Colors.white,
+                      color:
+                          themeProvider.isDarkMode ? Colors.grey : Colors.white,
                     ),
                   ),
                 ),
-                SizedBox(height: minDimension * 0.02), // Space between circle and rectangle
+                SizedBox(height: minDimension * 0.02),
                 Shimmer.fromColors(
-                  baseColor: themeProvider.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
-                  highlightColor: themeProvider.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                  baseColor: themeProvider.isDarkMode
+                      ? Colors.grey.shade900
+                      : Colors.grey.shade300,
+                  highlightColor: themeProvider.isDarkMode
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade200,
                   child: Container(
-                    width: minDimension * 0.18, // Adjust width to match design
+                    width: minDimension * 0.14,
                     height: totalHeight,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.0),
-                      color: themeProvider.isDarkMode ? Colors.grey : Colors.white,
+                      color:
+                          themeProvider.isDarkMode ? Colors.grey : Colors.white,
                     ),
                   ),
                 ),

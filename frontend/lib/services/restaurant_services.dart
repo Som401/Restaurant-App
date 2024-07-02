@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:frontend/models/food.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -36,7 +37,6 @@ class RestaurantServices {
 
     try {
       await _firestore.collection('orders').add(order);
-      print("Order added: $order");
       userProvider.clearCart();
     } catch (e) {
       print("Failed to add order: $e");
@@ -68,25 +68,68 @@ class RestaurantServices {
   }
 
   Future<List<String>> fetchCategories() async {
-    print("fetchCategories");
     try {
       QuerySnapshot querySnapshot =
           await _firestore.collection('restaurants').get();
-      Set<String> categories = {};
+      List<String> categories = [];
       for (var doc in querySnapshot.docs) {
-        print('doc: $doc');
         var data = doc.data() as Map<String, dynamic>;
         var docCategories =
             List<String>.from(data['categories'] as List<dynamic>);
 
         categories.addAll(docCategories);
-        print("categories: $categories");
       }
       await Future.delayed(const Duration(seconds: 2));
       return categories.toList();
     } catch (e) {
       print("Failed to fetch categories: $e");
       throw Exception("Failed to fetch categories: $e");
+    }
+  }
+
+  Future<List<Food>> fetchMenu() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('restaurants').get();
+      List<Food> menu = [];
+      for (var doc in querySnapshot.docs) {
+        var data = doc.data() as Map<String, dynamic>;
+        var docMenu =
+            List<Map<String, dynamic>>.from(data['menu'] as List<dynamic>);
+
+        var foodItems = docMenu.map((item) => Food.fromJson(item)).toList();
+        menu.addAll(foodItems);
+      }
+      await Future.delayed(const Duration(seconds: 2));
+      return menu;
+    } catch (e) {
+      print("Failed to fetch menu: $e");
+      throw Exception("Failed to fetch menu: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchRestaurantDetails() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('restaurants').get();
+      if (querySnapshot.docs.isNotEmpty) {
+        var doc = querySnapshot.docs.first;
+        var data = doc.data() as Map<String, dynamic>;
+        String name = data['name'];
+        String address = data['address'];
+        String phoneNumber = data['phoneNumber'];
+        return {
+          'name': name,
+          'address': address,
+          'phone': phoneNumber,
+        };
+      } else {
+        print('No restaurant details found');
+        return {};
+      }
+    } catch (e) {
+      print('Error fetching restaurant details: $e');
+      return {};
     }
   }
 }

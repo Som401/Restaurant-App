@@ -12,16 +12,17 @@ import 'package:frontend/models/restaurant.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/models/food.dart';
 import 'package:frontend/pages/food_page.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, User? user});
+class MenuPage extends StatefulWidget {
+  const MenuPage({super.key, User? user});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MenuPage> createState() => _MenuPageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _MenuPageState extends State<MenuPage>
     with SingleTickerProviderStateMixin {
   int selectedCategoryIndex = 0;
   TabController? _tabController;
@@ -29,22 +30,30 @@ class _HomePageState extends State<HomePage>
   bool _showBackToTopButton = false;
   double collapsedHeight = 0;
   bool _isLoadingCategories = true;
+  bool _isLoadingMenu = true;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<Restaurant>(context, listen: false).fetchCategories().then((_) {
+    final restaurantProvider = Provider.of<Restaurant>(context, listen: false);
+    restaurantProvider.fetchCategories().then((_) {
       if (mounted) {
         setState(() {
           _isLoadingCategories = false;
           _tabController = TabController(
-              length: Provider.of<Restaurant>(context, listen: false)
-                  .categories
-                  .length,
-              vsync: this);
+              length: restaurantProvider.categories.length, vsync: this);
         });
       }
     });
+
+    restaurantProvider.fetchMenu().then((_) {
+      if (mounted) {
+        setState(() {
+          _isLoadingMenu = false;
+        });
+      }
+    });
+
     _scrollController.addListener(() {
       if (_scrollController.offset >= collapsedHeight) {
         setState(() => _showBackToTopButton = true);
@@ -72,6 +81,8 @@ class _HomePageState extends State<HomePage>
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    print(user?.toString() ?? 'No user found');
     collapsedHeight =
         height * 0.02 * 2 + minDimension * 0.06 + minDimension * 0.25;
     return Scaffold(
@@ -136,8 +147,8 @@ class _HomePageState extends State<HomePage>
                     builder: (context, restaurant, child) {
                       return TabBarView(
                         controller: _tabController,
-                        children:
-                            getFoodInThisCategory(restaurant.menu, context),
+                        children: getFoodInThisCategory(
+                            restaurant.menu, context, _isLoadingMenu),
                       );
                     },
                   ),
@@ -167,25 +178,30 @@ List<Food> _filterMenuByCategory(String category, List<Food> fullMenu) {
   return fullMenu.where((food) => food.category == category).toList();
 }
 
-List<Widget> getFoodInThisCategory(List<Food> fullMenu, BuildContext context) {
-  final restaurant = Provider.of<Restaurant>(context, listen: false);
-  return restaurant.categories.map((category) {
-    List<Food> categoryMenu = _filterMenuByCategory(category, fullMenu);
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: categoryMenu.length,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        final food = categoryMenu[index];
-        return FoodTile(
-            food: food,
-            onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FoodPage(food: food),
-                  ),
-                ));
-      },
-    );
-  }).toList();
+List<Widget> getFoodInThisCategory(
+    List<Food> fullMenu, BuildContext context, bool isLoadingMenu) {
+  if (isLoadingMenu) {
+    return List<Widget>.generate(8, (index) => const FoodShimmerTile());
+  } else {
+    final restaurant = Provider.of<Restaurant>(context, listen: false);
+    return restaurant.categories.map((category) {
+      List<Food> categoryMenu = _filterMenuByCategory(category, fullMenu);
+      return ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: categoryMenu.length,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          final food = categoryMenu[index];
+          return FoodTile(
+              food: food,
+              onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FoodPage(food: food),
+                    ),
+                  ));
+        },
+      );
+    }).toList();
+  }
 }

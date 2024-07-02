@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frontend/auth/auth.dart';
 import 'package:frontend/components/drawer/my_drawer_tile.dart';
-import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/pages/menu_page.dart';
 import 'package:frontend/pages/orders_page.dart';
-import 'package:frontend/pages/settings_page.dart';
+import 'package:frontend/pages/profile_page.dart';
+import 'package:frontend/pages/table_reservation_page.dart';
 import 'package:frontend/providers/theme_provider.dart';
 import 'package:frontend/services/user_services.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class MyDrawer extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
 
-    final UserService _userService = UserService();
+    final UserService userService = UserService();
 
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     String logoPath = isDarkMode
@@ -47,24 +48,30 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ),
                 MyDrawerTile(
-                  text: "H O M E",
-                  icon: Icons.home,
+                  text: "M E N U",
+                  icon: Icons.restaurant_menu,
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                            builder: (context) => const HomePage()),
+                            builder: (context) => const MenuPage()),
                         (Route route) => false);
                   },
                 ),
                 MyDrawerTile(
                   text: "T A B L E\nR E S E R V A T I O N",
                   icon: Icons.table_restaurant,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const TableReservationPage()),
+                        (Route route) => false);
+                  },
                 ),
                 MyDrawerTile(
-                  text: "C A R T",
-                  icon: Icons.shopping_cart,
+                  text: "O R D E R S",
+                  icon: Icons.list_alt,
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushAndRemoveUntil(
@@ -74,14 +81,13 @@ class MyDrawer extends StatelessWidget {
                   },
                 ),
                 MyDrawerTile(
-                  //key: settingsTileKey,
-                  text: "S E T T I N G S",
-                  icon: Icons.settings,
+                  text: "P R O F I L E",
+                  icon: Icons.person,
                   onTap: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                            builder: (context) => const SettingsPage()),
+                            builder: (context) => const ProfilePage()),
                         (Route route) => false);
                   },
                 ),
@@ -92,7 +98,7 @@ class MyDrawer extends StatelessWidget {
             text: "L O G O U T",
             icon: Icons.exit_to_app,
             onTap: () {
-              _userService.signOut(context);
+              userService.signOut(context);
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => AuthPage()),
                   (Route route) => false);

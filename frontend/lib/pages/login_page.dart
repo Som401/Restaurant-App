@@ -240,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: () {
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                    builder: (context) => SignUpPage()),
+                                    builder: (context) => const SignUpPage()),
                                 (Route route) => false);
                           },
                           child: Text(

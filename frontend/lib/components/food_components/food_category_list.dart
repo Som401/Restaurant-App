@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/food_components/food_category_icon.dart';
 import 'dart:math';
-import 'package:frontend/models/food.dart';
 import 'package:frontend/models/restaurant.dart';
 import 'package:provider/provider.dart';
 
@@ -15,12 +14,8 @@ class CategoryTabBar extends StatefulWidget {
 }
 
 class CategoryTabBarState extends State<CategoryTabBar> {
-  Future<List<String>>? _categoriesFuture;
-
   Future<List<String>> fetchCategories() async {
-    // Check if we already have fetched categories
-    // In a real app, this method would fetch data from a remote source
-    await Future.delayed(Duration(seconds: 2)); // Simulate network delay
+    await Future.delayed(const Duration(seconds: 2));
     return Provider.of<Restaurant>(context, listen: false).categories.toList();
   }
 

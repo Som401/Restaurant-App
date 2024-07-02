@@ -6,8 +6,8 @@ import 'package:frontend/components/drawer/my_drawer.dart';
 import 'package:frontend/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

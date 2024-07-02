@@ -76,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
           showDialog(
             context: context,
             builder: (context) =>
-                AlertDialog(content: Text("An unexpected error occurred")),
+                const AlertDialog(content: Text("An unexpected error occurred")),
           );
         }
       }
