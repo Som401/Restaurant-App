@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -18,8 +19,10 @@ class MyReceipt extends StatelessWidget {
     String formattedDate = DateFormat('yyyy-MM-dd - HH:mm').format(dateTime);
     List<dynamic> cartItems = order['items'];
 
-    return SizedBox(
-      height: height * 0.5,
+    return Container(
+      // color: Colors.blue,
+      height: height * 0.6,
+      width: width * 0.8,
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -33,6 +36,7 @@ class MyReceipt extends StatelessWidget {
                     fontSize: minDimension * 0.05,
                   ),
                 ),
+
                 // Text(
                 //   "Immeuble Aicha Medical",
                 //   style: TextStyle(
@@ -73,42 +77,63 @@ class MyReceipt extends StatelessWidget {
             ),
             Text(
               "Order ID: 123",
+              textAlign: TextAlign.right,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: minDimension * 0.04,
               ),
             ),
-            Text(
-              "--------------------------------",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: minDimension * 0.04,
-              ),
+
+            DottedLine(
+              direction: Axis.horizontal,
+              lineLength: width * 0.68,
+              lineThickness: minDimension * 0.005,
+              dashLength: minDimension * 0.01,
+              dashColor: Theme.of(context).colorScheme.primary,
+              dashRadius: 0.0,
+              dashGapLength: minDimension * 0.01,
+              dashGapColor: Colors.transparent,
+              dashGapRadius: 0.0,
             ),
+            // Text(
+            //   "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -",
+            //   style: TextStyle(
+            //     color: Theme.of(context).colorScheme.primary,
+            //     fontSize: minDimension * 0.04,
+            //   ),
+            // ),
             ...cartItems.map((item) {
               double totalPrice = item['quantity'] * item['price'];
               String addons = '';
               if (item['selectedAddons'].isNotEmpty) {
                 addons = item['selectedAddons'].join(', ');
               }
-              return Column(
-                children: [
-                  Text(
-                    "${item['quantity']} x ${item['food']} - \$${totalPrice.toStringAsFixed(2)}",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: minDimension * 0.04,
+              return Container(
+                // color: Colors.red,
+                width: width*0.68,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "${item['quantity']} x ${item['food']} - \$${totalPrice.toStringAsFixed(2)}",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: minDimension * 0.04,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  if (addons != '')
-                    Text(
-                      "Add-ons: $addons",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: minDimension * 0.04,
+                    if (addons != '')
+                      Text(
+                        "Add-ons: $addons",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: minDimension * 0.04,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               );
             }),
           ],

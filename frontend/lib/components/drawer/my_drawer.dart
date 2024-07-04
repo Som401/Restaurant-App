@@ -12,7 +12,14 @@ import 'package:frontend/services/user_services.dart';
 import 'package:provider/provider.dart';
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  final bool isLoadingCategories;
+  final bool isLoadingMenu;
+  final bool isLoadingUser;
+  const MyDrawer(
+      {super.key,
+      this.isLoadingCategories = false,
+      this.isLoadingMenu = false,
+      this.isLoadingUser = false});
 
   @override
   Widget build(BuildContext context) {
@@ -51,44 +58,101 @@ class MyDrawer extends StatelessWidget {
                   text: "M E N U",
                   icon: Icons.restaurant_menu,
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const MenuPage()),
-                        (Route route) => false);
+                    if (isLoadingCategories || isLoadingMenu) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please wait until data is loaded.',
+                            style: TextStyle(fontSize: minDimension * 0.04),
+                          ),
+                          duration: const Duration(milliseconds: 1500),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const MenuPage()),
+                          (Route route) => false);
+                    }
                   },
                 ),
                 MyDrawerTile(
                   text: "T A B L E\nR E S E R V A T I O N",
                   icon: Icons.table_restaurant,
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const TableReservationPage()),
-                        (Route route) => false);
+                    if (isLoadingCategories || isLoadingMenu) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please wait until data is loaded.',
+                            style: TextStyle(fontSize: minDimension * 0.04),
+                          ),
+                          duration: const Duration(milliseconds: 1500),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TableReservationPage()),
+                          (Route route) => false);
+                    }
                   },
                 ),
                 MyDrawerTile(
                   text: "O R D E R S",
                   icon: Icons.list_alt,
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const OrdersPage()),
-                        (Route route) => false);
+                    if (isLoadingCategories || isLoadingMenu) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please wait until data is loaded.',
+                            style: TextStyle(fontSize: minDimension * 0.04),
+                          ),
+                          duration: const Duration(milliseconds: 1500),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const OrdersPage()),
+                          (Route route) => false);
+                    }
                   },
                 ),
                 MyDrawerTile(
                   text: "P R O F I L E",
                   icon: Icons.person,
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const ProfilePage()),
-                        (Route route) => false);
+                    if (isLoadingCategories || isLoadingMenu) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please wait until data is loaded.',
+                            style: TextStyle(fontSize: minDimension * 0.04),
+                          ),
+                          duration: const Duration(milliseconds: 1500),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const ProfilePage()),
+                          (Route route) => false);
+                    }
                   },
                 ),
               ],

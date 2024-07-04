@@ -16,7 +16,9 @@ import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key, User? user});
+  final String userUid;
+
+  const MenuPage({super.key, User? user, this.userUid = ''});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -25,16 +27,33 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage>
     with SingleTickerProviderStateMixin {
   int selectedCategoryIndex = 0;
-  TabController? _tabController;
-  final ScrollController _scrollController = ScrollController();
-  bool _showBackToTopButton = false;
   double collapsedHeight = 0;
+
+  bool _showBackToTopButton = false;
   bool _isLoadingCategories = true;
   bool _isLoadingMenu = true;
+  bool _isLoadingUser = true;
+
+  TabController? _tabController;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _initializeData();
+  }
+
+  void _initializeData() {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    userProvider.fetchUserDetails(widget.userUid).then((_) {
+      if (mounted) {
+        setState(() {
+          _isLoadingUser = false;
+        });
+      }
+    });
+
     final restaurantProvider = Provider.of<Restaurant>(context, listen: false);
     restaurantProvider.fetchCategories().then((_) {
       if (mounted) {
@@ -76,18 +95,21 @@ class _MenuPageState extends State<MenuPage>
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-    final user = Provider.of<UserProvider>(context, listen: false).user;
-    print(user?.toString() ?? 'No user found');
+
     collapsedHeight =
         height * 0.02 * 2 + minDimension * 0.06 + minDimension * 0.25;
     return Scaffold(
       key: _scaffoldKey,
-      drawer: const MyDrawer(),
+      drawer: MyDrawer(
+          isLoadingCategories: _isLoadingCategories,
+          isLoadingMenu: _isLoadingMenu,
+          isLoadingUser: _isLoadingUser),
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) =>

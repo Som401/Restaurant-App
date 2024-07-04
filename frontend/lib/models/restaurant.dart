@@ -5,9 +5,9 @@ import 'food.dart';
 class Restaurant extends ChangeNotifier {
   List<Food>? _menu;
   List<String>? _categories;
-  late String _name;
-  late String _address;
-  late int  _phone;
+  late String? _name;
+  late String? _address;
+  late int?  _phone;
   final RestaurantServices _restaurantServices = RestaurantServices();
 
   Future<void> fetchCategories() async {
@@ -36,7 +36,7 @@ class Restaurant extends ChangeNotifier {
 
   List<Food> get menu => _menu ?? [];
   List<String> get categories => _categories ?? [];
-  String get name => _name;
-  String get address => _address;
-  int get phone => _phone;
+  String get name => _name ?? '';
+  String get address => _address ?? '';
+  int get phone => _phone ?? 0;
 }

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/cart_item.dart';
+import 'package:frontend/services/user_services.dart';
 import 'package:intl/intl.dart';
 import '../models/user.dart';
 
@@ -12,6 +13,8 @@ class UserProvider with ChangeNotifier {
   final List<CartItem> _cart = [];
   List<CartItem> get cart => _cart;
 
+  final UserService _userService = UserService();
+
   void setUser(User user) {
     _user = user;
     notifyListeners();
@@ -20,6 +23,13 @@ class UserProvider with ChangeNotifier {
   void clearUser() {
     _user = null;
     notifyListeners();
+  }
+
+  Future<void> fetchUserDetails(userUid) async {
+    if (_user == null) {
+      _user = await _userService.fetchUserDetails(userUid);
+      notifyListeners();
+    }
   }
 
   void addToCart(FoodInfo food, List<AddonInfo> selectedAddons) {

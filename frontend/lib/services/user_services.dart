@@ -33,7 +33,7 @@ class UserService {
   }
 
   Future<void> login(
-    BuildContext context, String email, String password) async {
+      BuildContext context, String email, String password) async {
     print("Login started");
 
     await _auth.signInWithEmailAndPassword(email: email, password: password);
@@ -51,7 +51,7 @@ class UserService {
     if (userDoc.exists) {
       return User.fromMap(userDoc.data() as Map<String, dynamic>);
     } else {
-      throw Exception('User not found');
-    }
+    throw Exception('User not found');
   }
+}
 }

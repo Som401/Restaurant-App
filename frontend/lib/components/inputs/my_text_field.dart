@@ -27,6 +27,7 @@ class MyTextField extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     return TextField(
+      maxLength: 200,
       style: TextStyle(
         fontSize: minDimension * 0.05,
       ),
