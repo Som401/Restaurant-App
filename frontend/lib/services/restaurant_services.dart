@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:frontend/models/cart_item.dart';
 import 'package:frontend/models/food.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,20 +18,35 @@ class RestaurantServices {
     }
     final String userId = _auth.currentUser?.uid ?? 'anonymous';
 
+    final menu = await fetchMenu();
+
+    List<Map<String, dynamic>> items =
+        userProvider.cart.map((CartItem cartItem) {
+      Food foodItem =
+          menu.firstWhere((Food food) => food.id == cartItem.food.id);
+
+      List<dynamic> allAddons = foodItem.availableAddons.map((addon) {
+        return addon;
+      }).toList();
+      print(allAddons);
+      List<bool> addonsSelection = allAddons
+          .map((addon) => cartItem.selectedAddons
+              .any((selectedAddon) => selectedAddon.name == addon.name))
+          .toList();
+      print(addonsSelection);
+      return {
+        'foodId': cartItem.food.id,
+        'quantity': cartItem.quantity,
+        'selectedAddons': addonsSelection,
+      };
+    }).toList();
+
     Map<String, dynamic> order = {
       'userId': userId,
       'isDelivery': address.isNotEmpty,
       'address': address.isEmpty ? 'no_delivery' : address,
       'notes': notes,
-      'items': userProvider.cart.map((cartItem) {
-        return {
-          'food': cartItem.food.name,
-          'selectedAddons':
-              cartItem.selectedAddons.map((addon) => addon.name).toList(),
-          'quantity': cartItem.quantity,
-          'price': cartItem.totalPrice,
-        };
-      }).toList(),
+      'items': items,
       'timestamp': FieldValue.serverTimestamp(),
       'state': 'pending',
     };
@@ -117,11 +133,14 @@ class RestaurantServices {
         var data = doc.data() as Map<String, dynamic>;
         String name = data['name'];
         String address = data['address'];
-        String phoneNumber = data['phoneNumber'];
+        int phoneNumber = data['phoneNumber'];
+        double deliveryFee = (data['deliveryFee'] as num).toDouble();
+
         return {
           'name': name,
           'address': address,
           'phone': phoneNumber,
+          'deliveryFee': deliveryFee,
         };
       } else {
         print('No restaurant details found');

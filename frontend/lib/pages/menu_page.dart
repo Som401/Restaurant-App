@@ -14,6 +14,8 @@ import 'package:frontend/models/food.dart';
 import 'package:frontend/pages/food_page.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class MenuPage extends StatefulWidget {
   final String userUid;
@@ -55,6 +57,12 @@ class _MenuPageState extends State<MenuPage>
     });
 
     final restaurantProvider = Provider.of<Restaurant>(context, listen: false);
+    restaurantProvider.fetchRestaurantDetails().then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
     restaurantProvider.fetchCategories().then((_) {
       if (mounted) {
         setState(() {
@@ -101,7 +109,6 @@ class _MenuPageState extends State<MenuPage>
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-
     collapsedHeight =
         height * 0.02 * 2 + minDimension * 0.06 + minDimension * 0.25;
     return Scaffold(
@@ -120,7 +127,12 @@ class _MenuPageState extends State<MenuPage>
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
               child: Container(
                 margin: EdgeInsets.only(
-                    top: minDimension * 0.15, bottom: minDimension * 0.05),
+                  top: !kIsWeb && Platform.isIOS
+                      ? MediaQuery.of(context).size.shortestSide < 600
+                          ? minDimension * 0.25 // iPhone
+                          : minDimension * 0.12 // iPad
+                      : minDimension * 0.12, //android
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +153,7 @@ class _MenuPageState extends State<MenuPage>
             ),
             title: Container(
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -158,11 +170,12 @@ class _MenuPageState extends State<MenuPage>
           ),
         ],
         body: Container(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: width * 0.05),
             child: _tabController == null
                 ? ListView.builder(
+                    padding: EdgeInsets.zero,
                     itemCount: 8,
                     itemBuilder: (context, index) => const FoodShimmerTile())
                 : Consumer<Restaurant>(

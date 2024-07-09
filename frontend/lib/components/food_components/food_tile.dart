@@ -19,7 +19,7 @@ class FoodTile extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: Padding(
               padding: EdgeInsets.all(width * 0.05),
               child: Row(
@@ -45,7 +45,7 @@ class FoodTile extends StatelessWidget {
                               fontSize: minDimension * 0.05,
                             )),
                         Text(
-                          '${food.price} DT',
+                          '${food.price.toStringAsFixed(2)} DT',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontSize: minDimension * 0.04,

@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
     final minDimension = min(width, height);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: height * 0.10),
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              Theme.of(context).colorScheme.inversePrimary,
+                              Theme.of(context).colorScheme.inverseSurface,
                           padding: EdgeInsets.all(width * 0.05),
                           textStyle: TextStyle(fontSize: minDimension * 0.05),
                           shape: RoundedRectangleBorder(

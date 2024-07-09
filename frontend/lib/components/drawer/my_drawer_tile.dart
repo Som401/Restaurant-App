@@ -24,7 +24,7 @@ class MyDrawerTile extends StatelessWidget {
             text,
             style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
-                fontSize: minDimension * 0.05),
+                fontSize: minDimension * 0.04),
           ),
           leading: Icon(
             icon,

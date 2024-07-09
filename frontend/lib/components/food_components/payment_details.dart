@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/models/restaurant.dart';
+import 'package:provider/provider.dart';
 
 class PaymentDetails extends StatelessWidget {
   final double subtotal;
@@ -13,22 +15,21 @@ class PaymentDetails extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-    double deliveryFee = isDeliveryFee ? 7.0 : 0.0;
+    num deliveryFee =
+        Provider.of<Restaurant>(context, listen: false).deliveryFee;
+    deliveryFee = isDeliveryFee ? deliveryFee : 0.0;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: height * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-          Text(
-            "Payment Details",
-            style: TextStyle(
-                fontSize: minDimension * 0.05,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold),
-          ),
-        ]),
+        Text(
+          "Payment Details",
+          style: TextStyle(
+              fontSize: minDimension * 0.05,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold),
+        ),
         SizedBox(height: height * 0.01),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

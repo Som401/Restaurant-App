@@ -42,7 +42,7 @@ class _OrdersPageState extends State<OrdersPage> {
           return Scaffold(
               key: _scaffoldKey,
               drawer: const MyDrawer(),
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               appBar: MyAppBar(
                 title: "Your Orders",
                 scaffoldKey: _scaffoldKey,
@@ -110,14 +110,14 @@ class _OrdersPageState extends State<OrdersPage> {
           return Scaffold(
             key: _scaffoldKey,
             drawer: const MyDrawer(),
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: MyAppBar(
-              title: "Your Orders",
+              title: "Order History",
               scaffoldKey: _scaffoldKey,
             ),
             body: Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.05, vertical: height * 0.02),
+                  horizontal: width * 0.05),
               child: Column(
                 children: [
                   Expanded(

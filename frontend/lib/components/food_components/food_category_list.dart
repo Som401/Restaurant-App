@@ -68,7 +68,8 @@ class CategoryTabBarState extends State<CategoryTabBar> {
         controller: widget.tabController,
         isScrollable: true,
         tabs: generateTabs(categories, minDimension),
-        indicatorColor: Theme.of(context).colorScheme.primary,
+        indicatorColor: Theme.of(context).colorScheme.inverseSurface,
+        dividerHeight:0 ,
       ),
     );
   }

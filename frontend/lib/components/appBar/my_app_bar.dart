@@ -21,7 +21,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       toolbarHeight: minDimension * 0.1,
       centerTitle: true,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.transparent,
       foregroundColor: Theme.of(context).colorScheme.primary,
       leading: IconButton(
         icon: Icon(
@@ -38,5 +38,5 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-      MediaQuery.of(scaffoldKey.currentContext!).size.height * 0.1);
+      MediaQuery.of(scaffoldKey.currentContext!).size.height * 0.07);
 }

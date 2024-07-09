@@ -14,6 +14,7 @@ class AuthPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var userUid = snapshot.data!.uid;
+          print(userUid);
           return MenuPage(userUid: userUid);
         } else {
           return const LoginPage();

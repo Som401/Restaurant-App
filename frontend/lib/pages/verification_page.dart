@@ -17,7 +17,7 @@ class _VerificationPageState extends State<VerificationPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: height * 0.10),

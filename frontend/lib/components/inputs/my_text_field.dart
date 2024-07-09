@@ -27,7 +27,7 @@ class MyTextField extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     return TextField(
-      maxLength: 200,
+      maxLength: 150,
       style: TextStyle(
         fontSize: minDimension * 0.05,
       ),
@@ -42,6 +42,7 @@ class MyTextField extends StatelessWidget {
                   : TextInputType.text,
       maxLines: multiline,
       decoration: InputDecoration(
+        counterText: '',
         hintText: hintText,
         hintStyle: TextStyle(
           fontSize: minDimension * 0.04,

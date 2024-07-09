@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/food_components/cart_tile.dart';
-import 'package:frontend/components/food_components/payment_details.dart';
 import 'package:frontend/pages/checkout_page.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +18,7 @@ class CartPage extends StatelessWidget {
     return Consumer<UserProvider>(builder: ((context, user, child) {
       final userCart = user.cart;
       return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           toolbarHeight: minDimension * 0.1,
           scrolledUnderElevation: 0,
@@ -68,7 +67,7 @@ class CartPage extends StatelessWidget {
                   ),
                 );
               },
-              icon: const Icon(Icons.delete),
+              icon: const Icon(Icons.delete_outline),
               iconSize: minDimension * 0.05,
             ),
           ],
@@ -97,16 +96,75 @@ class CartPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.05, vertical: height * 0.02),
+              padding: EdgeInsets.only(
+                  left: width * 0.05,
+                  right: width * 0.05,
+                  bottom: height * 0.04),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   userCart.isEmpty
                       ? Container()
-                      : PaymentDetails(
-                          isDeliveryFee: false,
-                          subtotal: user.getTotalPrice(),
+                      : Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: height * 0.02,
+                              horizontal: width * 0.02),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Payment Details",
+                                style: TextStyle(
+                                    fontSize: minDimension * 0.05,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Total Price",
+                                    style: TextStyle(
+                                      fontSize: minDimension * 0.05,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: user
+                                              .getTotalPrice()
+                                              .toStringAsFixed(2),
+                                          style: TextStyle(
+                                            fontSize: minDimension * 0.05,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' DT',
+                                          style: TextStyle(
+                                            fontSize: minDimension * 0.05,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                   MyButton(
                     text: "Go to checkout",

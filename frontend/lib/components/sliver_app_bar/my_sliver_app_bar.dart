@@ -41,7 +41,7 @@ class MySliverAppBar extends StatelessWidget {
 
     return SliverAppBar(
       toolbarHeight: minDimension * 0.1,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0,
       scrolledUnderElevation: 0,
       expandedHeight: expandedHeight,

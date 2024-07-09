@@ -5,9 +5,10 @@ import 'food.dart';
 class Restaurant extends ChangeNotifier {
   List<Food>? _menu;
   List<String>? _categories;
-  late String? _name;
-  late String? _address;
-  late int?  _phone;
+  String? _name;
+  String? _address;
+  int? _phoneNumber;
+  double? _deliveryFee;
   final RestaurantServices _restaurantServices = RestaurantServices();
 
   Future<void> fetchCategories() async {
@@ -26,10 +27,12 @@ class Restaurant extends ChangeNotifier {
 
   Future<void> fetchRestaurantDetails() async {
     if (_name == null) {
-      final restaurantDetails = await _restaurantServices.fetchRestaurantDetails();
+      final restaurantDetails =
+          await _restaurantServices.fetchRestaurantDetails();
       _name = restaurantDetails['name'];
       _address = restaurantDetails['address'];
-      _phone = restaurantDetails['phone'];
+      _phoneNumber = restaurantDetails['phone'];
+      _deliveryFee = restaurantDetails['deliveryFee'];
       notifyListeners();
     }
   }
@@ -38,5 +41,10 @@ class Restaurant extends ChangeNotifier {
   List<String> get categories => _categories ?? [];
   String get name => _name ?? '';
   String get address => _address ?? '';
-  int get phone => _phone ?? 0;
+  int get phoneNumber => _phoneNumber ?? 0;
+  double get deliveryFee => _deliveryFee ?? 0.0;
+
+  getFoodById(item) {
+    return _menu!.firstWhere((element) => element.id == item);
+  }
 }

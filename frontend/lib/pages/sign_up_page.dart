@@ -90,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final minDimension = min(width, height);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: height * 0.10),
@@ -395,7 +395,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           onTap: () {
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                    builder: (context) => LoginPage()),
+                                    builder: (context) => const LoginPage()),
                                 (Route route) => false);
                           },
                           child: Text(

@@ -41,7 +41,7 @@ class _FoodCategoryIconState extends State<FoodCategoryIcon> {
           widget.categoryName,
           style: TextStyle(
             color: widget.isSelected
-                ? Theme.of(context).colorScheme.primary
+                ? Theme.of(context).colorScheme.inverseSurface
                 : Theme.of(context).colorScheme.secondary,
             fontSize: minDimension * 0.05,
             fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.normal,

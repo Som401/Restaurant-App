@@ -3,9 +3,13 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:frontend/components/food_components/my_receipt.dart';
+import 'package:frontend/models/food.dart';
+import 'package:frontend/models/restaurant.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+
+import 'package:provider/provider.dart';
 
 class OrderTile extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -14,7 +18,7 @@ class OrderTile extends StatelessWidget {
   double calculateTextsHeight(
       BuildContext context, double minDimension, double height) {
     final textStyle = TextStyle(
-      fontSize: minDimension * 0.05,
+      fontSize: minDimension * 0.04,
     );
     final textPainter = TextPainter(
       text: TextSpan(text: "order tile text", style: textStyle),
@@ -26,11 +30,40 @@ class OrderTile extends StatelessWidget {
     return height1 * 2;
   }
 
+ List<Map<String, dynamic>> generateFoodItems(Restaurant menu, List<dynamic> items) {
+  List<Map<String, dynamic>> foodItems = [];
+  for (var item in items) {
+    final Food food = menu.getFoodById(item['foodId']);
+    List<Map<String, dynamic>> selectedAddonsList = [];
+
+    double addonsTotalPrice = 0; 
+
+    for (int i = 0; i < food.availableAddons.length; i++) {
+      if (item['selectedAddons'][i]) {
+        Map<String, dynamic> addon = food.availableAddons[i].toJson();
+        selectedAddonsList.add(addon);
+        addonsTotalPrice += addon['price']; 
+      }
+    }
+
+    final foodItem = {
+      'food': food.name,
+      'price': food.price + addonsTotalPrice, 
+      'quantity': item['quantity'],
+      'selectedAddons': selectedAddonsList,
+    };
+    foodItems.add(foodItem);
+  }
+  return foodItems;
+}
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final menu = Provider.of<Restaurant>(context, listen: false);
+    final foodItems = generateFoodItems(menu, order['items']);
+    print(foodItems);
     final Timestamp timestamp = order['timestamp'] as Timestamp;
     double calculatedHeight =
         calculateTextsHeight(context, minDimension, height);
@@ -43,6 +76,7 @@ class OrderTile extends StatelessWidget {
             return AlertDialog(
               content: MyReceipt(
                 order: order,
+                foodItems: foodItems,
               ),
               // content: Text(displaycartReceipt(order,
               //     minDimension)),
@@ -53,8 +87,8 @@ class OrderTile extends StatelessWidget {
                   },
                   child: Text('Close',
                       style: TextStyle(
-                        fontSize: minDimension * 0.05,
-                        color: Theme.of(context).colorScheme.background,
+                        fontSize: minDimension * 0.04,
+                        color: Theme.of(context).colorScheme.surface,
                       )),
                 ),
               ],
@@ -107,7 +141,7 @@ class OrderTile extends StatelessWidget {
                                   : (order['state'] == 'denied'
                                       ? Icons.error
                                       : Icons.access_time),
-                              size: minDimension * 0.08,
+                              size: minDimension * 0.07,
                               color: order['state'] == 'accepted' ||
                                       order['state'] == 'complete'
                                   ? Colors.green
@@ -126,13 +160,13 @@ class OrderTile extends StatelessWidget {
                               // 'Order Number: #${order['orderNumber']}',
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
-                                fontSize: minDimension * 0.05,
+                                fontSize: minDimension * 0.04,
                               )),
                           Text(
                             'Order on: ${DateFormat('yyyy-MM-dd - HH:mm').format(timestamp.toDate())}',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
-                              fontSize: minDimension * 0.05,
+                              fontSize: minDimension * 0.04,
                             ),
                           ),
                         ],
@@ -144,26 +178,26 @@ class OrderTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          'Price (${calculateTotalItems(order['items'])} item${calculateTotalItems(order['items']) > 1 ? 's' : ''})',
+                          'Price (${calculateTotalItems(foodItems)} item${calculateTotalItems(foodItems) > 1 ? 's' : ''})',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
-                            fontSize: minDimension * 0.05,
+                            fontSize: minDimension * 0.04,
                           )),
                       RichText(
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: calculateTotalCost(order['items'])
-                                  .toStringAsFixed(2),
+                              text: calculateTotalCost(foodItems),
                               style: TextStyle(
-                                fontSize: minDimension * 0.05,
+                                fontSize: minDimension * 0.04,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                             TextSpan(
                               text: ' DT',
                               style: TextStyle(
-                                fontSize: minDimension * 0.05,
+                                fontSize: minDimension * 0.04,
+                                fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .inverseSurface,
@@ -181,12 +215,12 @@ class OrderTile extends StatelessWidget {
                       Text("State:",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
-                            fontSize: minDimension * 0.05,
+                            fontSize: minDimension * 0.04,
                           )),
                       Text(order['state'],
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: minDimension * 0.05,
+                            fontSize: minDimension * 0.04,
                           )),
                     ],
                   ),
@@ -198,7 +232,7 @@ class OrderTile extends StatelessWidget {
                 child: Icon(
                   Icons.receipt_long_outlined,
                   color: Theme.of(context).colorScheme.inverseSurface,
-                  size: minDimension * 0.05,
+                  size: minDimension * 0.04,
                 ),
               ),
             ]),
@@ -218,45 +252,10 @@ int calculateTotalItems(List<dynamic> items) {
   return totalItems;
 }
 
-double calculateTotalCost(List<dynamic> items) {
+String calculateTotalCost(List<dynamic> items) {
   double totalCost = 0;
   for (var item in items) {
     totalCost += item['price'];
   }
-  return totalCost;
-}
-
-String displaycartReceipt(Map<String, dynamic> order, double minDimension) {
-  final receipt = StringBuffer();
-  receipt.writeln("Here's your receipt.");
-  receipt.writeln();
-  final DateTime dateTime = order['timestamp'].toDate();
-
-  String formattedDate = DateFormat('yyyy-MM-dd - HH:mm').format(dateTime);
-
-  receipt.writeln(formattedDate);
-  receipt.writeln();
-  receipt.writeln("- - - - - - - - - - - - - - - - - - - -");
-
-  List<dynamic> cartItems = order['items'];
-
-  for (final cartItem in cartItems) {
-    receipt.writeln(
-        "${cartItem['quantity']} x ${cartItem['food']} - \$ ${cartItem['price']}");
-
-    if (cartItem['selectedAddons'].isNotEmpty) {
-      String addons = cartItem['selectedAddons'].join(', ');
-      receipt.writeln("Add-ons: $addons");
-    }
-    receipt.writeln();
-  }
-  receipt.writeln("- - - - - - - - - - - - - - - - - - - -");
-  receipt.writeln();
-
-  int totalItems = calculateTotalItems(cartItems);
-  double totalPrice = calculateTotalCost(cartItems);
-  receipt.writeln("Total Items: $totalItems");
-  receipt.writeln("Total Price: \$ $totalPrice");
-
-  return receipt.toString();
+  return totalCost.toStringAsFixed(2);
 }

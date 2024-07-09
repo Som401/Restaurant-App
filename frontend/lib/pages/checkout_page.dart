@@ -126,16 +126,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   isDeliveryFee: isDelivery,
                   subtotal: user.getTotalPrice(),
                 ),
-                MyButton(
-                    text: "Send Order",
-                    onTap: () {
-                      restaurantServices.addOrder(
-                          userProvider: user,
-                          address: addressController.text,
-                          notes: notesController.text);
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    }),
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: height * 0.02,
+                  ),
+                  child: MyButton(
+                      text: "Send Order",
+                      onTap: () {
+                        restaurantServices.addOrder(
+                            userProvider: user,
+                            address: addressController.text,
+                            notes: notesController.text);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      }),
+                ),
               ],
             ),
           ));

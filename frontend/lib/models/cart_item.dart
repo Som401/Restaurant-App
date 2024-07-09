@@ -1,9 +1,11 @@
 class FoodInfo {
+  final String id;
   final String name;
   final double price;
   final String imagePath;
 
-  FoodInfo({required this.name, required this.price, required this.imagePath});
+  FoodInfo(
+      {required this.name, required this.price, required this.imagePath,required this.id,});
 }
 
 class AddonInfo {
@@ -30,20 +32,5 @@ class CartItem {
       total += addon.price;
     }
     return total * quantity;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'food': {
-        'name': food.name,
-      },
-      'selectedAddons': selectedAddons
-          .map((addon) => {
-                'name': addon.name,
-              })
-          .toList(),
-      'quantity': quantity,
-      'totalPrice': totalPrice,
-    };
   }
 }

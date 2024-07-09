@@ -36,7 +36,7 @@ class MyDrawer extends StatelessWidget {
 
     return Drawer(
       elevation: 1,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       width: width * 0.8,
       child: Column(
         children: [
@@ -158,16 +158,23 @@ class MyDrawer extends StatelessWidget {
               ],
             ),
           ),
-          MyDrawerTile(
-            text: "L O G O U T",
-            icon: Icons.exit_to_app,
-            onTap: () {
-              userService.signOut(context);
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => AuthPage()),
-                  (Route route) => false);
-            },
+          Column(
+            children: [
+              MyDrawerTile(
+                text: "L O G O U T",
+                icon: Icons.exit_to_app,
+                onTap: () {
+                  userService.signOut(context);
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => AuthPage()),
+                      (Route route) => false);
+              
+                },
+              ),
+              SizedBox(height: height*0.02,)
+            ],
           ),
+
         ],
       ),
     );

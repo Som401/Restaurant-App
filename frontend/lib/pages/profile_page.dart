@@ -16,6 +16,7 @@ class ProfilePage extends StatelessWidget {
     final minDimension = min(width, height);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       drawer: const MyDrawer(),
       appBar: AppBar(
         centerTitle: true,
@@ -25,9 +26,9 @@ class ProfilePage extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
               fontSize: minDimension * 0.05),
         ),
-        backgroundColor: Theme.of(context).colorScheme.background,
       ),
-      body: Column(
+      body: 
+      Column(
         children: [
           Container(
             decoration: BoxDecoration(

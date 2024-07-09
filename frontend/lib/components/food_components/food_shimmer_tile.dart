@@ -44,7 +44,7 @@ class FoodShimmerTile extends StatelessWidget {
       builder: (context, themeProvider, child) => Column(
         children: [
           Container(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: Padding(
               padding: EdgeInsets.all(width * 0.05),
               child: Row(

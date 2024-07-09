@@ -17,14 +17,9 @@ class SplashScreen extends StatelessWidget {
         ? "assets/images/delcapo_logo.png"
         : "assets/images/light_mode_delcapo_logo.png";
     return AnimatedSplashScreen(
-      splash: Center(child: Image.asset(logoPath)
-          // Divider(
-          //   color: Theme.of(context).colorScheme.inversePrimary,
-          //   thickness: 5,
-          // ),
-          ),
-      nextScreen: AuthPage(),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      splash: Center(child: Image.asset(logoPath)),
+      nextScreen: const AuthPage(),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       splashIconSize: iconSize,
       duration: 500,
     );

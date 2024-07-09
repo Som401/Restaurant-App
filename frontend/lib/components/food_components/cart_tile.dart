@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/components/quantity_selector/my_quantity_selector.dart';
+import 'package:frontend/components/selectors/my_quantity_selector.dart';
 import 'package:frontend/models/cart_item.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -108,7 +108,7 @@ class MyCartTile extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: cartItem.selectedAddons.isEmpty ? 0 : height * 0.1,
+                    height: cartItem.selectedAddons.isEmpty ? 0 : height * 0.06,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       padding: EdgeInsets.only(
@@ -119,7 +119,7 @@ class MyCartTile extends StatelessWidget {
                       children: cartItem.selectedAddons
                           .map((addon) => Padding(
                                 padding: EdgeInsets.only(
-                                  right: width * 0.01,
+                                  right: width * 0.02,
                                 ),
                                 child: FilterChip(
                                   label: Row(
@@ -129,14 +129,14 @@ class MyCartTile extends StatelessWidget {
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .secondary,
-                                            fontSize: minDimension * 0.04,
+                                            fontSize: minDimension * 0.03,
                                           )),
-                                      Text(' (${addon.price}) DT',
+                                      Text(' (${addon.price.toStringAsFixed(2)}) DT',
                                           style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .secondary,
-                                            fontSize: minDimension * 0.04,
+                                            fontSize: minDimension * 0.03,
                                           )),
                                     ],
                                   ),
