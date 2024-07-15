@@ -88,6 +88,8 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     TextField(
                       controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textCapitalization: TextCapitalization.none,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: minDimension * 0.05,

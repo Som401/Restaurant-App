@@ -18,7 +18,7 @@ class _MyGuestNumberState extends State<MyGuestNumber> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-    final maxGuests = 200;
+    const maxGuests = 200;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

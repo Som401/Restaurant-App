@@ -63,7 +63,6 @@ class OrderTile extends StatelessWidget {
     final minDimension = min(width, height);
     final menu = Provider.of<Restaurant>(context, listen: false);
     final foodItems = generateFoodItems(menu, order['items']);
-    print(foodItems);
     final Timestamp timestamp = order['timestamp'] as Timestamp;
     double calculatedHeight =
         calculateTextsHeight(context, minDimension, height);

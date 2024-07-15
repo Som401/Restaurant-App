@@ -2,10 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/components/appBar/my_app_bar.dart';
+import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/drawer/my_drawer.dart';
 import 'package:frontend/components/reservation_components/my_calendar.dart';
+import 'package:frontend/components/reservation_components/my_dropdown_button.dart';
 import 'package:frontend/components/reservation_components/my_guest_number.dart';
 import 'package:frontend/components/reservation_components/my_time_picker.dart';
+import 'package:frontend/pages/reservation_info_details.dart';
 
 class TableReservationPage extends StatefulWidget {
   const TableReservationPage({super.key});
@@ -20,8 +23,15 @@ class _TableReservationPageState extends State<TableReservationPage> {
   DateTime _selectedDay = DateTime.now();
   int _hour = DateTime.now().hour % 12 == 0 ? 12 : DateTime.now().hour % 12;
   int _minute = DateTime.now().minute;
-  String _timeFormat = DateTime.now().hour < 12 ? "AM" : "PM";
   int _guestCounter = 1;
+  String _timeFormat = DateTime.now().hour < 12 ? "AM" : "PM";
+  String dropdownValue = 'Casual Dining';
+
+  void updateDropdownValue(String newDropdownValue) {
+    setState(() {
+      dropdownValue = newDropdownValue;
+    });
+  }
 
   void updateSelectedDay(DateTime newSelectedDay) {
     setState(() {
@@ -67,6 +77,13 @@ class _TableReservationPageState extends State<TableReservationPage> {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
 
+    final items = [
+      'Casual Dining',
+      'Family Dinner',
+      'Romantic Date',
+      'Birthday',
+      'Business',
+    ];
     return Scaffold(
         key: _scaffoldKey,
         drawer: const MyDrawer(),
@@ -77,54 +94,109 @@ class _TableReservationPageState extends State<TableReservationPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Date:",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: minDimension * 0.06,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Date:",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: minDimension * 0.06,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      MyCalendar(
+                        selectedDay: _selectedDay,
+                        onDaySelected: updateSelectedDay,
+                      ),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        "Time:",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: minDimension * 0.06,
+                        ),
+                      ),
+                      // SizedBox(height: height * 0.01),
+                      MyTimePicker(
+                          hour: _hour,
+                          minute: _minute,
+                          timeFormat: _timeFormat,
+                          updateHour: updateHour,
+                          updateMinute: updateMinute,
+                          updateTimeFormat: updateTimeFormat),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        "Guests:",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: minDimension * 0.06,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      MyGuestNumber(
+                          guestCounter: _guestCounter,
+                          incrementGuestCounter: incrementGuestCounter,
+                          decrementGuestCounter: decrementGuestCounter),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        "Occasion:",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: minDimension * 0.06,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      MyDropdownButton(
+                          items: items,
+                          dropdownValue: dropdownValue,
+                          updateDropdownValue: updateDropdownValue),
+                      SizedBox(height: height * 0.02),
+                    ],
                   ),
                 ),
-                SizedBox(height: height * 0.01),
-                MyCalendar(
-                  selectedDay: _selectedDay,
-                  onDaySelected: updateSelectedDay,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: height * 0.04,
                 ),
-                SizedBox(height: height * 0.01),
-                Text(
-                  "Time:",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: minDimension * 0.06,
-                  ),
+                child: MyButton(
+                  text: "Continue",
+                  onTap: () {
+                    int adjustedHour = _hour;
+                    if (_timeFormat == "PM" && _hour != 12) {
+                      adjustedHour = _hour + 12;
+                    } else if (_timeFormat == "AM" && _hour == 12) {
+                      adjustedHour = 0;
+                    }
+
+                    DateTime adjustedSelectedDay = DateTime(
+                      _selectedDay.year,
+                      _selectedDay.month,
+                      _selectedDay.day,
+                      adjustedHour,
+                      _minute,
+                    );
+                    print(adjustedSelectedDay);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReservationInfoDetails(
+                          selectedDay: adjustedSelectedDay,
+                          guestCounter: _guestCounter,
+                          occasion: dropdownValue,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(height: height * 0.01),
-                MyTimePicker(
-                    hour: _hour,
-                    minute: _minute,
-                    timeFormat: _timeFormat,
-                    updateHour: updateHour,
-                    updateMinute: updateMinute,
-                    updateTimeFormat: updateTimeFormat),
-                Text(
-                  "Guests:",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: minDimension * 0.06,
-                  ),
-                ),
-                SizedBox(height: height * 0.01),
-                MyGuestNumber(
-                    guestCounter: _guestCounter,
-                    incrementGuestCounter: incrementGuestCounter,
-                    decrementGuestCounter: decrementGuestCounter),
-                SizedBox(height: height * 0.01),
-              ],
-            ),
+              ),
+            ],
           ),
         ));
   }

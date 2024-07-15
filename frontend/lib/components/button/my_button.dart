@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/components/text/processing_text.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
@@ -19,20 +20,22 @@ class MyButton extends StatelessWidget {
     return GestureDetector(
         onTap: onTap,
         child: Container(
-          padding:  EdgeInsets.all(minDimension * 0.03),
+          padding: EdgeInsets.all(minDimension * 0.03),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.inverseSurface,
             borderRadius: BorderRadius.circular(30),
           ),
           child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: minDimension * 0.05,
-              ),
-            ),
+            child: text == "processingText"
+                ? const ProcessingText()
+                : Text(
+                    text,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: minDimension * 0.05,
+                    ),
+                  ),
           ),
         ));
   }

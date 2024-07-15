@@ -12,6 +12,7 @@ import 'package:frontend/models/restaurant.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/models/food.dart';
 import 'package:frontend/pages/food_page.dart';
+import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -41,7 +42,14 @@ class _MenuPageState extends State<MenuPage>
 
   @override
   void initState() {
-    super.initState();
+    super.initState();   
+    _scrollController.addListener(() {
+      if (_scrollController.offset >= collapsedHeight) {
+        setState(() => _showBackToTopButton = true);
+      } else {
+        setState(() => _showBackToTopButton = false);
+      }
+    });
     _initializeData();
   }
 
@@ -92,8 +100,8 @@ class _MenuPageState extends State<MenuPage>
 
   @override
   void dispose() {
-    _tabController?.dispose();
     _scrollController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
@@ -109,6 +117,9 @@ class _MenuPageState extends State<MenuPage>
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final networkStatus =
+        Provider.of<NetworkStatus>(context);
+        print(networkStatus);
     collapsedHeight =
         height * 0.02 * 2 + minDimension * 0.06 + minDimension * 0.25;
     return Scaffold(

@@ -8,6 +8,35 @@ class RestaurantServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Future<void> addReservation({
+    required String name,
+    required String email,
+    required String occasion,
+    required DateTime selectedDay,
+    required String phoneNumber, 
+    required String dialCode, 
+    required int nbGuests,
+  }) async {
+    try {
+      Timestamp timestamp = Timestamp.fromDate(selectedDay);
+      Map<String, dynamic> reservationData = {
+        'userUid': _auth.currentUser?.uid ?? 'anonymous',
+        'name': name,
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'dialCode': dialCode,
+        'selectedDay': timestamp,
+        'nbGuests': nbGuests,
+        'occasion': occasion,
+      };
+
+      await _firestore.collection('reservations').add(reservationData);
+    } catch (e) {
+      print("Failed to add reservation: $e");
+      throw Exception("Failed to add reservation");
+    }
+  }
+
   Future<void> addOrder({
     required UserProvider userProvider,
     required String address,

@@ -47,6 +47,10 @@ dependencies:
   dotted_line: ^3.2.2
   table_calendar: ^3.1.2
   numberpicker: ^2.1.2
+  date_picker_timeline: ^1.2.6
+  intl_phone_number_input: ^0.7.4
+  quickalert: ^1.1.0
+  connectivity_plus: ^6.0.3
 
 dev_dependencies:
   flutter_test:

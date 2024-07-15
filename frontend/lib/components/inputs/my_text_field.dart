@@ -10,7 +10,8 @@ class MyTextField extends StatelessWidget {
   final bool isNumber;
   final bool isPhone;
   final int multiline;
-
+  final bool filled;
+  final bool enabled;
   const MyTextField(
       {super.key,
       required this.hintText,
@@ -19,7 +20,9 @@ class MyTextField extends StatelessWidget {
       this.isEmail = false,
       this.isNumber = false,
       this.isPhone = false,
-      this.multiline = 1});
+      this.filled = false,
+      this.multiline = 1,
+      this.enabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +43,14 @@ class MyTextField extends StatelessWidget {
               : isPhone
                   ? TextInputType.phone
                   : TextInputType.text,
+      textCapitalization: TextCapitalization.none,
       maxLines: multiline,
+      enabled: enabled,
       decoration: InputDecoration(
+        filled: filled,
+        fillColor: filled
+            ? Theme.of(context).colorScheme.tertiary
+            : Theme.of(context).colorScheme.surface,
         counterText: '',
         hintText: hintText,
         hintStyle: TextStyle(
@@ -51,22 +60,22 @@ class MyTextField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.tertiary,
+            color: Theme.of(context).colorScheme.secondary,
             width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.tertiary,
-            width: 2.0,
+            color: Theme.of(context).colorScheme.secondary,
+            width: 1.0,
           ),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.tertiary,
-            width: 2.0,
+            color: Theme.of(context).colorScheme.secondary,
+            width: 1.0,
           ),
         ),
       ),

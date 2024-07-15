@@ -32,15 +32,11 @@ class _MyTimePickerState extends State<MyTimePicker> {
     final minDimension = min(width, height);
 
     return SizedBox(
-      height: height * 0.2,
-      width: width * 0.9,
+      height: minDimension * 0.5,
+      width: minDimension * 0.9,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Text(
-          //     "Pick Your Time! ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")} $timeFormat",
-          //     style:
-          //         const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
@@ -54,15 +50,16 @@ class _MyTimePickerState extends State<MyTimePicker> {
                   value: widget.hour,
                   zeroPad: true,
                   infiniteLoop: true,
-                  itemWidth: 80,
-                  itemHeight: 60,
+                  itemWidth: minDimension * 0.18,
+                  itemHeight: minDimension * 0.14,
                   onChanged: (value) {
                     widget.updateHour(value);
                   },
-                  textStyle: const TextStyle(color: Colors.grey, fontSize: 20),
+                  textStyle: TextStyle(
+                      color: Colors.grey, fontSize: minDimension * 0.05),
                   selectedTextStyle: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
-                      fontSize: 30),
+                      fontSize: minDimension * 0.07),
                   decoration: BoxDecoration(
                     border: Border(
                         top: BorderSide(
@@ -79,15 +76,16 @@ class _MyTimePickerState extends State<MyTimePicker> {
                   value: widget.minute,
                   zeroPad: true,
                   infiniteLoop: true,
-                  itemWidth: 80,
-                  itemHeight: 60,
+                  itemWidth: minDimension * 0.18,
+                  itemHeight: minDimension * 0.14,
                   onChanged: (value) {
                     widget.updateMinute(value);
                   },
-                  textStyle: const TextStyle(color: Colors.grey, fontSize: 20),
+                  textStyle: TextStyle(
+                      color: Colors.grey, fontSize: minDimension * 0.05),
                   selectedTextStyle: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
-                      fontSize: 30),
+                      fontSize: minDimension * 0.07),
                   decoration: BoxDecoration(
                     border: Border(
                         top: BorderSide(
@@ -104,8 +102,9 @@ class _MyTimePickerState extends State<MyTimePicker> {
                         widget.updateTimeFormat("AM");
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: minDimension * 0.05,
+                            vertical: minDimension * 0.025),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(13),
                           color: widget.timeFormat == "AM"
@@ -118,20 +117,21 @@ class _MyTimePickerState extends State<MyTimePicker> {
                               color: widget.timeFormat == "PM"
                                   ? Theme.of(context).colorScheme.primary
                                   : Colors.white,
-                              fontSize: 25),
+                              fontSize: minDimension * 0.06),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 15,
+                     SizedBox(
+                      height: height * 0.02,
                     ),
                     GestureDetector(
                       onTap: () {
                         widget.updateTimeFormat("PM");
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: minDimension * 0.05,
+                            vertical: minDimension * 0.025),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(13),
                           color: widget.timeFormat == "PM"
@@ -144,7 +144,7 @@ class _MyTimePickerState extends State<MyTimePicker> {
                               color: widget.timeFormat == "AM"
                                   ? Theme.of(context).colorScheme.primary
                                   : Colors.white,
-                              fontSize: 25),
+                              fontSize: minDimension * 0.06),
                         ),
                       ),
                     )

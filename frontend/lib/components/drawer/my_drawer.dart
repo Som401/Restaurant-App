@@ -166,7 +166,7 @@ class MyDrawer extends StatelessWidget {
                 onTap: () {
                   userService.signOut(context);
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => AuthPage()),
+                      MaterialPageRoute(builder: (context) => const AuthPage()),
                       (Route route) => false);
               
                 },
