@@ -1,10 +1,16 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/components/button/my_button.dart';
+import 'package:frontend/components/inputs/my_text_field.dart';
+import 'package:frontend/components/inputs/phone_number_input.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/verification_page.dart';
 import 'package:frontend/services/user_services.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -25,6 +31,22 @@ class _SignUpPageState extends State<SignUpPage> {
       TextEditingController();
 
   final UserService _userService = UserService();
+  bool isPasswordVisible = false;
+  bool isConfirmPasswordVisible = false;
+  PhoneNumber number = PhoneNumber(isoCode: 'TN', dialCode: '216');
+  bool validNumber = false;
+
+  void onInputChanged(PhoneNumber value) {
+    setState(() {
+      number = value;
+    });
+  }
+
+  void onValidChanged(bool value) {
+    setState(() {
+      validNumber = value;
+    });
+  }
 
   void registerUser() async {
     if (emailController.text.isEmpty ||
@@ -75,8 +97,8 @@ class _SignUpPageState extends State<SignUpPage> {
           Navigator.pop(context);
           showDialog(
             context: context,
-            builder: (context) =>
-                const AlertDialog(content: Text("An unexpected error occurred")),
+            builder: (context) => const AlertDialog(
+                content: Text("An unexpected error occurred")),
           );
         }
       }
@@ -90,17 +112,28 @@ class _SignUpPageState extends State<SignUpPage> {
     final minDimension = min(width, height);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(top: height * 0.10),
+          padding: EdgeInsets.only(
+            top: !kIsWeb && Platform.isIOS
+                ? MediaQuery.of(context).size.shortestSide < 600
+                    ? 0 // iPhone
+                    : height * 0.1 // iPad
+                : height * 0.1, // Android
+          ),
           child: Column(
             children: [
               Text(
                 'Create a new account',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: minDimension * 0.08,
+                  fontSize: minDimension * 0.07,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -110,284 +143,148 @@ class _SignUpPageState extends State<SignUpPage> {
                 'Please fill in the form to continue',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: minDimension * 0.03,
+                  fontSize: minDimension * 0.04,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: height * 0.1),
+              SizedBox(height: height * 0.05),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.07),
+                padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.05, vertical: height * 0.02),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextField(
-                      controller: fullNameController,
+                    Text(
+                      "Full Name",
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: minDimension * 0.05,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Full Name',
-                        hintStyle: TextStyle(
-                            fontSize: minDimension * 0.05,
-                            color: Theme.of(context).colorScheme.secondary),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.tertiary,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: minDimension * 0.045,
                       ),
                     ),
-                    SizedBox(height: height * 0.02),
-                    TextField(
-                      controller: emailController,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: minDimension * 0.05,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Email',
-                        hintStyle: TextStyle(
-                            fontSize: minDimension * 0.05,
-                            color: Theme.of(context).colorScheme.secondary),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.tertiary,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.02),
-                    TextField(
-                      controller: phoneNumberController,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: minDimension * 0.05,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Phone Number',
-                        hintStyle: TextStyle(
-                          fontSize: minDimension * 0.05,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.tertiary,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.02),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: passwordVisible,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: minDimension * 0.05,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Password',
-                        hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.tertiary,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        suffixIcon: Padding(
-                          padding: EdgeInsets.only(right: width * 0.03),
-                          child: IconButton(
-                            icon: Icon(
-                              passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Theme.of(context).colorScheme.secondary,
-                              size: minDimension * 0.06,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                passwordVisible = !passwordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.02),
-                    TextField(
-                      controller: confirmPasswordController,
-                      obscureText: confirmPasswordVisible,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: minDimension * 0.05,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Confirm Password',
-                        hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.tertiary,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        suffixIcon: Padding(
-                          padding: EdgeInsets.only(right: width * 0.03),
-                          child: IconButton(
-                            icon: Icon(
-                              confirmPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Theme.of(context).colorScheme.secondary,
-                              size: minDimension * 0.06,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                confirmPasswordVisible =
-                                    !confirmPasswordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: height * 0.1),
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: height * 0.07,
-                ),
-                child: Column(
-                  children: [
                     SizedBox(
-                      width: width * 0.83,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          registerUser();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.inversePrimary,
-                          padding: EdgeInsets.all(width * 0.05),
-                          textStyle: TextStyle(fontSize: minDimension * 0.05),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: minDimension * 0.05,
-                          ),
-                        ),
+                      height: height * 0.01,
+                    ),
+                    MyTextField(
+                      hintText: "Your Name",
+                      controller: emailController,
+                      isEmail: true,
+                      filled: true,
+                      // enabled: !isReservationProcessing,
+                    ),
+                    SizedBox(
+                      height: height * 0.03,
+                    ),
+                    Text(
+                      "Email Address",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: minDimension * 0.045,
                       ),
                     ),
-                    SizedBox(height: height * 0.02),
-                    OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: Image.asset(
-                        'assets/images/google_logo.png',
-                        height: width * 0.08,
-                      ),
-                      label: Text('Sign in with google',
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    MyTextField(
+                      hintText: "Your Email Address",
+                      controller: emailController,
+                      isEmail: true,
+                      filled: true,
+                      // enabled: !isReservationProcessing,
+                    ),
+                    SizedBox(
+                      height: height * 0.03,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Phone Number",
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: minDimension * 0.05,
-                          )),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide.none,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: minDimension * 0.045,
+                          ),
                         ),
+                        Text(
+                          'Invalid phone number',
+                          style: TextStyle(
+                              color: number.phoneNumber != null &&
+                                      !validNumber &&
+                                      number.phoneNumber != number.dialCode
+                                  ? Theme.of(context).colorScheme.inversePrimary
+                                  : Theme.of(context).colorScheme.surface,
+                              fontSize: minDimension * 0.03),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    PhoneNumberInput(
+                        controller: phoneNumberController,
+                        number: number,
+                        validNumber: validNumber,
+                        onValidChanged: onValidChanged,
+                        onInputChanged: onInputChanged),
+                    SizedBox(
+                      height: height * 0.03,
+                    ),
+                    Text(
+                      'Password',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: minDimension * 0.04,
                       ),
                     ),
-                    SizedBox(height: height * 0.02),
+                    SizedBox(height: height * 0.01),
+                    MyTextField(
+                      hintText: "Your Password",
+                      controller: passwordController,
+                      isPassword: true,
+                      filled: true,
+                      passwordVisible: isPasswordVisible,
+                      onChanged: () {
+                        setState(() {
+                          isPasswordVisible = !isPasswordVisible;
+                        });
+                      },
+                    ),
+                    SizedBox(height: height * 0.03),
+                    Text(
+                      'Confirm Password',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: minDimension * 0.04,
+                      ),
+                    ),
+                    SizedBox(height: height * 0.01),
+                    MyTextField(
+                      hintText: "confirm Password",
+                      controller: confirmPasswordController,
+                      isPassword: true,
+                      filled: true,
+                      passwordVisible: isConfirmPasswordVisible,
+                      onChanged: () {
+                        setState(() {
+                          isConfirmPasswordVisible = !isConfirmPasswordVisible;
+                        });
+                      },
+                    ),
+                    SizedBox(height: height * 0.03),
+                    MyButton(
+                      text: 'Sign Up',
+                      onTap: () {
+                        registerUser();
+                      },
+                    ),
+                    SizedBox(height: height * 0.03),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Have an account?",
+                          "Already have an account?",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: minDimension * 0.03,
+                            fontSize: minDimension * 0.045,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -403,13 +300,15 @@ class _SignUpPageState extends State<SignUpPage> {
                             style: TextStyle(
                               color:
                                   Theme.of(context).colorScheme.inverseSurface,
-                              fontSize: minDimension * 0.03,
+                              fontSize: minDimension * 0.045,
+                              fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
                       ],
                     ),
+                    SizedBox(height: height * 0.03),
                   ],
                 ),
               ),

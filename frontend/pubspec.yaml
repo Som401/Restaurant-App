@@ -90,6 +90,7 @@ flutter:
      - assets/images/food_logo/drinks.png
      - assets/images/food_menu/Margherita-Pizza.jpg
      - assets/images/delcapo-inside.png
+     - assets/images/delcapo-inside2.jpg
      
 
   # An image asset can refer to one or more resolution-specific "variants", see

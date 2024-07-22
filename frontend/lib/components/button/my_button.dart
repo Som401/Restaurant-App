@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/components/text/processing_text.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
@@ -26,16 +25,14 @@ class MyButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
           child: Center(
-            child: text == "processingText"
-                ? const ProcessingText()
-                : Text(
-                    text,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: minDimension * 0.05,
-                    ),
-                  ),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: minDimension * 0.05,
+              ),
+            ),
           ),
         ));
   }

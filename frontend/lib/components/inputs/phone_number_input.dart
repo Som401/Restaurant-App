@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/theme_provider.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:provider/provider.dart';
 
 class PhoneNumberInput extends StatefulWidget {
   final TextEditingController controller;
@@ -8,7 +10,6 @@ class PhoneNumberInput extends StatefulWidget {
   final bool validNumber;
   final Function(bool) onValidChanged;
   final Function(PhoneNumber) onInputChanged;
-
   const PhoneNumberInput({
     super.key,
     required this.controller,
@@ -37,19 +38,24 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     return InternationalPhoneNumberInput(
       inputDecoration: InputDecoration(
         hintText: 'Phone Number',
         filled: true,
-        fillColor: Theme.of(context).colorScheme.tertiary,
+        fillColor: isDarkMode
+            ? Theme.of(context).colorScheme.tertiary
+            : Theme.of(context).colorScheme.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(25),
           borderSide: BorderSide(
             color: widget.number.phoneNumber != null &&
                     !widget.validNumber &&
                     widget.number.phoneNumber != widget.number.dialCode
                 ? Theme.of(context).colorScheme.inversePrimary
-                : Theme.of(context).colorScheme.secondary,
+                : isDarkMode
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.inverseSurface,
             width: 1,
           ),
         ),
@@ -58,20 +64,24 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
           fontSize: minDimension * 0.04,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(25),
           borderSide: BorderSide(
             color: widget.number.phoneNumber != null &&
                     !widget.validNumber &&
                     widget.number.phoneNumber != widget.number.dialCode
                 ? Theme.of(context).colorScheme.inversePrimary
-                : Theme.of(context).colorScheme.secondary,
+                : isDarkMode
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.inverseSurface,
             width: 2,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(25),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.secondary,
+            color: isDarkMode
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.inverseSurface,
             width: 1,
           ),
         ),
@@ -116,7 +126,7 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
       formatInput: false,
       keyboardType: TextInputType.phone,
       inputBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(25),
       ),
       onSaved: (PhoneNumber number) {
         // Save number logic here if needed

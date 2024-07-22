@@ -170,8 +170,6 @@ class CartPage extends StatelessWidget {
                     text: "Go to checkout",
                     onTap: () async {
                       if (userCart.isNotEmpty) {
-                        print(
-                            'Cart is not empty, navigating to CheckoutPage'); // Debug print
                         Navigator.push(
                           context,
                           MaterialPageRoute(

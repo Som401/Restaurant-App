@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:frontend/components/food_components/my_receipt.dart';
@@ -8,7 +7,6 @@ import 'package:frontend/models/restaurant.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-
 import 'package:provider/provider.dart';
 
 class OrderTile extends StatelessWidget {
@@ -30,32 +28,34 @@ class OrderTile extends StatelessWidget {
     return height1 * 2;
   }
 
- List<Map<String, dynamic>> generateFoodItems(Restaurant menu, List<dynamic> items) {
-  List<Map<String, dynamic>> foodItems = [];
-  for (var item in items) {
-    final Food food = menu.getFoodById(item['foodId']);
-    List<Map<String, dynamic>> selectedAddonsList = [];
+  List<Map<String, dynamic>> generateFoodItems(
+      Restaurant menu, List<dynamic> items) {
+    List<Map<String, dynamic>> foodItems = [];
+    for (var item in items) {
+      final Food food = menu.getFoodById(item['foodId']);
+      List<Map<String, dynamic>> selectedAddonsList = [];
 
-    double addonsTotalPrice = 0; 
+      double addonsTotalPrice = 0;
 
-    for (int i = 0; i < food.availableAddons.length; i++) {
-      if (item['selectedAddons'][i]) {
-        Map<String, dynamic> addon = food.availableAddons[i].toJson();
-        selectedAddonsList.add(addon);
-        addonsTotalPrice += addon['price']; 
+      for (int i = 0; i < food.availableAddons.length; i++) {
+        if (item['selectedAddons'][i]) {
+          Map<String, dynamic> addon = food.availableAddons[i].toJson();
+          selectedAddonsList.add(addon);
+          addonsTotalPrice += addon['price'];
+        }
       }
-    }
 
-    final foodItem = {
-      'food': food.name,
-      'price': food.price + addonsTotalPrice, 
-      'quantity': item['quantity'],
-      'selectedAddons': selectedAddonsList,
-    };
-    foodItems.add(foodItem);
+      final foodItem = {
+        'food': food.name,
+        'price': food.price + addonsTotalPrice,
+        'quantity': item['quantity'],
+        'selectedAddons': selectedAddonsList,
+      };
+      foodItems.add(foodItem);
+    }
+    return foodItems;
   }
-  return foodItems;
-}
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -66,7 +66,7 @@ class OrderTile extends StatelessWidget {
     final Timestamp timestamp = order['timestamp'] as Timestamp;
     double calculatedHeight =
         calculateTextsHeight(context, minDimension, height);
-
+    final restaurantDetails = Provider.of<Restaurant>(context, listen: false);
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -77,20 +77,6 @@ class OrderTile extends StatelessWidget {
                 order: order,
                 foodItems: foodItems,
               ),
-              // content: Text(displaycartReceipt(order,
-              //     minDimension)),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Close',
-                      style: TextStyle(
-                        fontSize: minDimension * 0.04,
-                        color: Theme.of(context).colorScheme.surface,
-                      )),
-                ),
-              ],
             );
           },
         );
@@ -155,8 +141,7 @@ class OrderTile extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Order Number: #105',
-                              // 'Order Number: #${order['orderNumber']}',
+                          Text("Order Number: ${order['orderNumber']}",
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontSize: minDimension * 0.04,
@@ -186,7 +171,8 @@ class OrderTile extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: calculateTotalCost(foodItems),
+                              text:
+                                  "${(calculateTotalCost(foodItems) + (order['isDelivery'] == true ? restaurantDetails.deliveryFee : 0)).toStringAsFixed(2)} DT",
                               style: TextStyle(
                                 fontSize: minDimension * 0.04,
                                 color: Theme.of(context).colorScheme.primary,
@@ -251,10 +237,10 @@ int calculateTotalItems(List<dynamic> items) {
   return totalItems;
 }
 
-String calculateTotalCost(List<dynamic> items) {
+double calculateTotalCost(List<dynamic> items) {
   double totalCost = 0;
   for (var item in items) {
-    totalCost += item['price'];
+    totalCost += item['price'] * item['quantity'];
   }
-  return totalCost.toStringAsFixed(2);
+  return totalCost;
 }

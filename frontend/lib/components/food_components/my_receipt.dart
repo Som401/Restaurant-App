@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/models/restaurant.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyReceipt extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -14,11 +16,13 @@ class MyReceipt extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
-
+    final restaurantDetails = Provider.of<Restaurant>(context);
     final DateTime dateTime = order['timestamp'].toDate();
-    String formattedDate = DateFormat('yyyy-MM-dd - HH:mm').format(dateTime);
-
-    return SingleChildScrollView(
+    String formattedDate = DateFormat('yyyy/MM/dd').format(dateTime);
+    String formattedTime = DateFormat('HH:mm').format(dateTime);
+    print(formattedTime);
+    return SizedBox(
+      height: height * 0.45,
       child: Column(
         children: [
           Column(
@@ -54,7 +58,7 @@ class MyReceipt extends StatelessWidget {
                 ),
               ),
               Text(
-                "TEL  :  24 399 399",
+                "TEL  :  ${restaurantDetails.phoneNumber.toString().substring(0, 2)} ${restaurantDetails.phoneNumber.toString().substring(2, 5)} ${restaurantDetails.phoneNumber.toString().substring(5, 8)}",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: minDimension * 0.04,
@@ -74,7 +78,7 @@ class MyReceipt extends StatelessWidget {
           Row(
             children: [
               Text(
-                "Order Number: #123",
+                "Order Number: ${order['orderNumber']}",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: minDimension * 0.04,
@@ -94,52 +98,58 @@ class MyReceipt extends StatelessWidget {
             dashGapColor: Colors.transparent,
             dashGapRadius: 0.0,
           ),
-          ...foodItems.map((item) {
-            double totalPrice = item['quantity'] * item['price'];
-            String addons = '';
-            if (item['selectedAddons'].isNotEmpty) {
-              addons = groupAndFormatAddons(item['selectedAddons']);
-            }
-            return SizedBox(
-              width: width * 0.75,
+          Expanded(
+            child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: height * 0.003),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "-${item['quantity']} ${item['food']}",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.04,
+                children: foodItems.map((item) {
+                  double totalPrice = item['price'];
+                  String addons = '';
+                  if (item['selectedAddons'].isNotEmpty) {
+                    addons = groupAndFormatAddons(item['selectedAddons']);
+                  }
+                  return SizedBox(
+                    width: width * 0.75,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: height * 0.003),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "-${item['quantity']} ${item['food']}",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: minDimension * 0.04,
+                              ),
+                            ),
+                            Text(
+                              "${totalPrice.toStringAsFixed(2)} DT",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: minDimension * 0.04,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        "\$${totalPrice.toStringAsFixed(2)}",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.04,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (addons.isNotEmpty)
-                    Padding(
-                      padding:  EdgeInsets.only(left: width * 0.05),
-                      child: Text(
-                        "($addons)",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.04,
-                        ),
-                      ),
+                        if (addons.isNotEmpty)
+                          Padding(
+                            padding: EdgeInsets.only(left: width * 0.05),
+                            child: Text(
+                              "($addons)",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: minDimension * 0.04,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                ],
+                  );
+                }).toList(),
               ),
-            );
-          }),
+            ),
+          ),
           SizedBox(height: height * 0.008),
           DottedLine(
             direction: Axis.horizontal,
@@ -166,6 +176,100 @@ class MyReceipt extends StatelessWidget {
             dashGapColor: Colors.transparent,
             dashGapRadius: 0.0,
           ),
+          SizedBox(height: height * 0.005),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "SubTotal:",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+              Text(
+                "${calculateTotalCost(foodItems).toStringAsFixed(2)} DT",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Delivery Fee:",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+              Text(
+                order['isDelivery']
+                    ? "${restaurantDetails.deliveryFee} DT"
+                    : '0.0 DT',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Total Cost:",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+              Text(
+                "${(calculateTotalCost(foodItems) + (order['isDelivery'] == true ? restaurantDetails.deliveryFee : 0)).toStringAsFixed(2)} DT",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: height * 0.003,
+          ),
+          DottedLine(
+            direction: Axis.horizontal,
+            lineLength: width * 0.7,
+            lineThickness: minDimension * 0.005,
+            dashLength: minDimension * 0.02,
+            dashColor: Theme.of(context).colorScheme.primary,
+            dashRadius: 0.0,
+            dashGapLength: minDimension * 0.02,
+            dashGapColor: Colors.transparent,
+            dashGapRadius: 0.0,
+          ),
+          SizedBox(height: height * 0.003),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Date: $formattedDate",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+              Text(
+                "Time: $formattedTime",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: minDimension * 0.04,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -194,7 +298,7 @@ int calculateTotalItems(List<dynamic> items) {
 double calculateTotalCost(List<dynamic> items) {
   double totalCost = 0;
   for (var item in items) {
-    totalCost += item['price'];
+    totalCost += item['price'] * item['quantity'];
   }
   return totalCost;
 }

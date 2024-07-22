@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/food_components/payment_details.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
+import 'package:frontend/components/quick_alerts/wifi_error.dart';
 import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/services/restaurant_services.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/quickalert.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -21,8 +21,6 @@ class CheckoutPage extends StatefulWidget {
 class _CheckoutPageState extends State<CheckoutPage> {
   bool isDelivery = false;
   bool isOrderProcessing = false;
-  String processingText = "Processing";
-  Timer? processingDotsTimer;
   final TextEditingController notesController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   RestaurantServices restaurantServices = RestaurantServices();
@@ -40,7 +38,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void dispose() {
     notesController.dispose();
     addressController.dispose();
-    processingDotsTimer?.cancel();
     super.dispose();
   }
 
@@ -50,6 +47,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     final networkStatus = Provider.of<NetworkStatus>(context);
+
     return Consumer<UserProvider>(builder: ((context, user, child) {
       return Scaffold(
           appBar: AppBar(
@@ -147,84 +145,36 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         if (isOrderProcessing) return;
                         try {
                           if (networkStatus == NetworkStatus.offline) {
-                            QuickAlert.show(
-                                context: context,
-                                barrierDismissible: false,
-                                type: QuickAlertType.error,
-                                title: 'Order Failed',
-                                text:
-                                    'We were unable to process your order at this time. Please check your internet connection and try again.',
-                                confirmBtnTextStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                confirmBtnColor:
-                                    Theme.of(context).colorScheme.tertiary,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
-                                textColor:
-                                    Theme.of(context).colorScheme.primary,
-                                titleColor:
-                                    Theme.of(context).colorScheme.primary,
-                                onConfirmBtnTap: () {
-                                  setState(() {
-                                    isOrderProcessing = false;
-                                    Navigator.of(context).pop();
-                                  });
-                                });
+                            QuickAlerts.showErrorAlert(
+                                context,
+                                'No Internet Connection',
+                                'Please check your internet connection and try again.',
+                                () {});
                           } else {
-                            QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.loading,
-                              barrierDismissible: false,
-                              title: 'Processing',
-                              text: 'Your Order is being processed...',
-                              confirmBtnTextStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              confirmBtnColor:
-                                  Theme.of(context).colorScheme.tertiary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.surface,
-                              textColor: Theme.of(context).colorScheme.primary,
-                              titleColor: Theme.of(context).colorScheme.primary,
-                            );
+                            QuickAlerts.showLoadingAlert(context, 'Processing',
+                                'Your Order is being processed...');
                             setState(() {
                               isOrderProcessing = true;
                             });
                             var orderFuture = restaurantServices.addOrder(
-                                userProvider: user,
-                                address: addressController.text,
-                                notes: notesController.text);
+                              userProvider: user,
+                              address: addressController.text,
+                              notes: notesController.text,
+                            );
                             await Future.wait([
                               orderFuture,
                               Future.delayed(const Duration(seconds: 2)),
                             ]);
-                            Navigator.of(context).pop();
-                            QuickAlert.show(
-                                context: context,
-                                barrierDismissible: false,
-                                type: QuickAlertType.success,
-                                title: 'Success',
-                                text:
-                                    'Your order has been successfully placed. You will receive a confirmation shortly.',
-                                confirmBtnTextStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                confirmBtnColor:
-                                    Theme.of(context).colorScheme.tertiary,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
-                                textColor:
-                                    Theme.of(context).colorScheme.primary,
-                                titleColor:
-                                    Theme.of(context).colorScheme.primary,
-                                onConfirmBtnTap: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                });
+                            QuickAlerts.showSuccessAlert(context, 'Success',
+                                'Your order has been successfully placed. You will receive a confirmation shortly.',
+                                () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            });
                             Future.delayed(const Duration(seconds: 15), () {
                               if (mounted) {
+                                Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
@@ -232,27 +182,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             });
                           }
                         } catch (e) {
-                          QuickAlert.show(
-                              context: context,
-                              barrierDismissible: false,
-                              type: QuickAlertType.error,
-                              title: 'Order Failed',
-                              text:
-                                  'We were unable to process your order at this time. Please check your internet connection and try again.',
-                              confirmBtnTextStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              confirmBtnColor:
-                                  Theme.of(context).colorScheme.tertiary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.surface,
-                              textColor: Theme.of(context).colorScheme.primary,
-                              titleColor: Theme.of(context).colorScheme.primary,
-                              onConfirmBtnTap: () {
-                                Navigator.of(context).pop();
-                              });
+                          setState(() {
+                            isOrderProcessing = false;
+                          });
+                          QuickAlerts.showErrorAlert(context, 'Order Failed',
+                              'We were unable to process your order at this time. Please check your internet connection and try again.',
+                              () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          });
                           Future.delayed(const Duration(seconds: 5), () {
                             if (mounted) {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             }
                           });

@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:frontend/components/appBar/my_app_bar.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/drawer/my_drawer.dart';
-import 'package:frontend/components/reservation_components/my_calendar.dart';
-import 'package:frontend/components/reservation_components/my_dropdown_button.dart';
-import 'package:frontend/components/reservation_components/my_guest_number.dart';
-import 'package:frontend/components/reservation_components/my_time_picker.dart';
-import 'package:frontend/pages/reservation_info_details.dart';
+import 'package:frontend/components/reservation_components/reservation_shimmer_tile.dart';
+import 'package:frontend/components/reservation_components/reservation_tile.dart';
+import 'package:frontend/models/user.dart';
+import 'package:frontend/pages/table_reservation_info_page.dart';
+import 'package:frontend/providers/user_provider.dart';
+import 'package:frontend/services/restaurant_services.dart';
+import 'package:provider/provider.dart';
 
 class TableReservationPage extends StatefulWidget {
   const TableReservationPage({super.key});
@@ -19,56 +21,24 @@ class TableReservationPage extends StatefulWidget {
 
 class _TableReservationPageState extends State<TableReservationPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late Future<List<dynamic>> futureReservations;
+  late RestaurantServices restaurantServices;
+  List<dynamic> reservations = [];
 
-  DateTime _selectedDay = DateTime.now();
-  int _hour = DateTime.now().hour % 12 == 0 ? 12 : DateTime.now().hour % 12;
-  int _minute = DateTime.now().minute;
-  int _guestCounter = 1;
-  String _timeFormat = DateTime.now().hour < 12 ? "AM" : "PM";
-  String dropdownValue = 'Casual Dining';
-
-  void updateDropdownValue(String newDropdownValue) {
-    setState(() {
-      dropdownValue = newDropdownValue;
-    });
+  @override
+  void initState() {
+    super.initState();
+    restaurantServices = RestaurantServices();
+    futureReservations = fetchReservations();
   }
 
-  void updateSelectedDay(DateTime newSelectedDay) {
+  Future<List<dynamic>> fetchReservations() async {
+    final fetchedReservations =
+        await restaurantServices.fetchUserReservations();
     setState(() {
-      _selectedDay = newSelectedDay;
+      reservations = fetchedReservations;
     });
-  }
-
-  void incrementGuestCounter() {
-    setState(() {
-      _guestCounter++;
-    });
-  }
-
-  void decrementGuestCounter() {
-    setState(() {
-      if (_guestCounter > 1) {
-        _guestCounter--;
-      }
-    });
-  }
-
-  void updateHour(int newHour) {
-    setState(() {
-      _hour = newHour;
-    });
-  }
-
-  void updateMinute(int newMinute) {
-    setState(() {
-      _minute = newMinute;
-    });
-  }
-
-  void updateTimeFormat(String newTimeFormat) {
-    setState(() {
-      _timeFormat = newTimeFormat;
-    });
+    return fetchedReservations;
   }
 
   @override
@@ -76,128 +46,116 @@ class _TableReservationPageState extends State<TableReservationPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final user = Provider.of<UserProvider>(context).user;
 
-    final items = [
-      'Casual Dining',
-      'Family Dinner',
-      'Romantic Date',
-      'Birthday',
-      'Business',
-    ];
     return Scaffold(
-        key: _scaffoldKey,
-        drawer: const MyDrawer(),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: MyAppBar(
-          title: "Table Reservation",
-          scaffoldKey: _scaffoldKey,
-        ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+      key: _scaffoldKey,
+      drawer: const MyDrawer(),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: MyAppBar(
+        title: "Table Reservation",
+        scaffoldKey: _scaffoldKey,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+              right: width * 0.05, left: width * 0.05, top: height * 0.02),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              greetingText(user, minDimension, context),
+              restaurantNameText(minDimension, context),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Date:",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.06,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      MyCalendar(
-                        selectedDay: _selectedDay,
-                        onDaySelected: updateSelectedDay,
-                      ),
-                      SizedBox(height: height * 0.02),
-                      Text(
-                        "Time:",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.06,
-                        ),
-                      ),
-                      // SizedBox(height: height * 0.01),
-                      MyTimePicker(
-                          hour: _hour,
-                          minute: _minute,
-                          timeFormat: _timeFormat,
-                          updateHour: updateHour,
-                          updateMinute: updateMinute,
-                          updateTimeFormat: updateTimeFormat),
-                      SizedBox(height: height * 0.02),
-                      Text(
-                        "Guests:",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.06,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      MyGuestNumber(
-                          guestCounter: _guestCounter,
-                          incrementGuestCounter: incrementGuestCounter,
-                          decrementGuestCounter: decrementGuestCounter),
-                      SizedBox(height: height * 0.02),
-                      Text(
-                        "Occasion:",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.06,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      MyDropdownButton(
-                          items: items,
-                          dropdownValue: dropdownValue,
-                          updateDropdownValue: updateDropdownValue),
-                      SizedBox(height: height * 0.02),
-                    ],
-                  ),
-                ),
+                child: reservationList(futureReservations, minDimension),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: height * 0.04,
-                ),
-                child: MyButton(
-                  text: "Continue",
-                  onTap: () {
-                    int adjustedHour = _hour;
-                    if (_timeFormat == "PM" && _hour != 12) {
-                      adjustedHour = _hour + 12;
-                    } else if (_timeFormat == "AM" && _hour == 12) {
-                      adjustedHour = 0;
-                    }
-
-                    DateTime adjustedSelectedDay = DateTime(
-                      _selectedDay.year,
-                      _selectedDay.month,
-                      _selectedDay.day,
-                      adjustedHour,
-                      _minute,
-                    );
-                    print(adjustedSelectedDay);
-                    Navigator.push(
+              MyButton(
+                  text: 'Reserve a table',
+                  onTap: () async {
+                    final reservationData = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ReservationInfoDetails(
-                          selectedDay: adjustedSelectedDay,
-                          guestCounter: _guestCounter,
-                          occasion: dropdownValue,
-                        ),
+                        builder: (context) => const TableReservationInfoPage(),
                       ),
                     );
-                  },
-                ),
-              ),
+                    if (reservationData != null) {
+                      setState(() {
+                        reservations.add(reservationData);
+                        print(reservationData);
+                      });
+                    }
+                  }),
             ],
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  Widget greetingText(User? user, double minDimension, BuildContext context) {
+    return Text(
+      'Hello, ${user?.name}!',
+      style: TextStyle(
+        fontSize: minDimension * 0.04,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget restaurantNameText(double minDimension, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Reserve a table at',
+          style: TextStyle(
+            fontSize: minDimension * 0.07,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        Text(
+          'DelCapo',
+          style: TextStyle(
+            fontSize: minDimension * 0.07,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget reservationList(
+      Future<List<dynamic>> futureReservations, double minDimension) {
+    return FutureBuilder<List<dynamic>>(
+        future: futureReservations,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: 6,
+                itemBuilder: (context, index) =>
+                    const ReservationShimmerTile());
+          } else if (snapshot.hasData || reservations.isNotEmpty) {
+            print(reservations);
+            if (reservations.isEmpty) {
+              return Center(
+                child: Text(
+                  'No reservations found.',
+                  style: TextStyle(fontSize: minDimension * 0.05),
+                ),
+              );
+            }
+            reservations
+                .sort((a, b) => b['selectedDay'].compareTo(a['selectedDay']));
+            return ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: reservations.length,
+                itemBuilder: (context, index) {
+                  final reservation = reservations[index];
+                  return ReservationTile(reservation: reservation);
+                });
+          } else {
+            return const Center(child: Text('No reservations found.'));
+          }
+        });
   }
 }

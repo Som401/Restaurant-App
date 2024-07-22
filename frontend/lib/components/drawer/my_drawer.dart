@@ -5,7 +5,7 @@ import 'package:frontend/auth/auth.dart';
 import 'package:frontend/components/drawer/my_drawer_tile.dart';
 import 'package:frontend/pages/menu_page.dart';
 import 'package:frontend/pages/orders_page.dart';
-import 'package:frontend/pages/profile_page.dart';
+import 'package:frontend/pages/settings_page.dart';
 import 'package:frontend/pages/table_reservation_page.dart';
 import 'package:frontend/providers/theme_provider.dart';
 import 'package:frontend/services/user_services.dart';
@@ -56,7 +56,7 @@ class MyDrawer extends StatelessWidget {
                 ),
                 MyDrawerTile(
                   text: "M E N U",
-                  icon: Icons.restaurant_menu,
+                  icon: Icons.restaurant_menu_outlined,
                   onTap: () {
                     if (isLoadingCategories || isLoadingMenu) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,7 +81,7 @@ class MyDrawer extends StatelessWidget {
                 ),
                 MyDrawerTile(
                   text: "T A B L E\nR E S E R V A T I O N",
-                  icon: Icons.table_restaurant,
+                  icon: Icons.table_restaurant_outlined,
                   onTap: () {
                     if (isLoadingCategories || isLoadingMenu) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -131,8 +131,8 @@ class MyDrawer extends StatelessWidget {
                   },
                 ),
                 MyDrawerTile(
-                  text: "P R O F I L E",
-                  icon: Icons.person,
+                  text: "S E T T I N G S",
+                  icon: Icons.settings_outlined,
                   onTap: () {
                     if (isLoadingCategories || isLoadingMenu) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -150,7 +150,7 @@ class MyDrawer extends StatelessWidget {
                       Navigator.of(context).pop();
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
-                              builder: (context) => const ProfilePage()),
+                              builder: (context) => SettignsPage()),
                           (Route route) => false);
                     }
                   },
@@ -168,13 +168,13 @@ class MyDrawer extends StatelessWidget {
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const AuthPage()),
                       (Route route) => false);
-              
                 },
               ),
-              SizedBox(height: height*0.02,)
+              SizedBox(
+                height: height * 0.02,
+              )
             ],
           ),
-
         ],
       ),
     );

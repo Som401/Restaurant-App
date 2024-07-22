@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/restaurant_services.dart';
 import 'food.dart';
@@ -9,7 +10,10 @@ class Restaurant extends ChangeNotifier {
   String? _address;
   int? _phoneNumber;
   double? _deliveryFee;
+  Timestamp? _lastOrderDate;
+  int? _currentOrderNumber;
   final RestaurantServices _restaurantServices = RestaurantServices();
+
 
   Future<void> fetchCategories() async {
     if (_categories == null) {
@@ -33,6 +37,8 @@ class Restaurant extends ChangeNotifier {
       _address = restaurantDetails['address'];
       _phoneNumber = restaurantDetails['phone'];
       _deliveryFee = restaurantDetails['deliveryFee'];
+      _lastOrderDate = restaurantDetails['lastOrderDate'];
+      _currentOrderNumber = restaurantDetails['currentOrderNumber'];
       notifyListeners();
     }
   }
@@ -43,6 +49,8 @@ class Restaurant extends ChangeNotifier {
   String get address => _address ?? '';
   int get phoneNumber => _phoneNumber ?? 0;
   double get deliveryFee => _deliveryFee ?? 0.0;
+  Timestamp get lastOrderDate => _lastOrderDate ?? Timestamp.now();
+  int get currentOrderNumber => _currentOrderNumber ?? 1;
 
   getFoodById(item) {
     return _menu!.firstWhere((element) => element.id == item);
