@@ -6,7 +6,7 @@ import 'package:frontend/components/appBar/my_app_bar.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
 import 'package:frontend/components/inputs/phone_number_input.dart';
-import 'package:frontend/components/quick_alerts/wifi_error.dart';
+import 'package:frontend/components/quick_alerts/quick_alerts.dart';
 import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/services/restaurant_services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -253,7 +253,6 @@ class _ReservationClientInfoPageState extends State<ReservationClientInfoPage> {
                       });
                       Future.delayed(const Duration(seconds: 5), () {
                         if (mounted) {
-                          Navigator.of(context).pop();
                           Navigator.of(context).pop();
                           Navigator.pop(context, reservationData);
                         }

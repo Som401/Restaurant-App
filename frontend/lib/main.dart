@@ -51,7 +51,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).themeData,
       home: const SplashScreen(),
-      // home: const AuthPage(),
     );
   }
 }

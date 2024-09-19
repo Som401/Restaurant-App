@@ -11,6 +11,7 @@ import 'package:frontend/pages/change_password_page.dart';
 import 'package:frontend/pages/forgot_password_page.dart';
 import 'package:frontend/pages/profile_page.dart';
 import 'package:frontend/providers/theme_provider.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/services/user_services.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ class SettignsPage extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
     final UserService userService = UserService();
-
+    final user = Provider.of<UserProvider>(context).user;
     return Scaffold(
       key: _scaffoldKey,
       drawer: const MyDrawer(),
@@ -49,12 +50,14 @@ class SettignsPage extends StatelessWidget {
                         )),
                     SizedBox(height: height * 0.01),
                     GestureDetector(
-                      onTap: () {Navigator.push(
+                      onTap: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const ProfilePage(),
                           ),
-                        );},
+                        );
+                      },
                       child: Container(
                         color: Theme.of(context).colorScheme.surface,
                         child: Row(
@@ -63,13 +66,15 @@ class SettignsPage extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(Icons.person_outline,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                     size: minDimension * 0.07),
                                 SizedBox(width: width * 0.02),
                                 Text('My Profile',
                                     style: TextStyle(
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                         fontSize: minDimension * 0.04,
                                         fontWeight: FontWeight.bold)),
                               ],
@@ -121,116 +126,138 @@ class SettignsPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: height * 0.03),
-                    Text('Security',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: minDimension * 0.04,
-                        )),
-                    SizedBox(height: height * 0.01),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ChangePasswordPage(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        color: Theme.of(context).colorScheme.surface,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.lock_reset_outlined,
-                                    color: Theme.of(context).colorScheme.primary,
-                                    size: minDimension * 0.07),
-                                SizedBox(width: width * 0.02),
-                                Text('Change Password',
-                                    style: TextStyle(
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
-                                        fontSize: minDimension * 0.04,
-                                        fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                            Icon(Icons.arrow_forward_ios,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: minDimension * 0.04),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.015),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordPage(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        color: Theme.of(context).colorScheme.surface,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.password_outlined,
-                                    color: Theme.of(context).colorScheme.primary,
-                                    size: minDimension * 0.07),
-                                SizedBox(width: width * 0.02),
-                                Text('Forgot Password',
-                                    style: TextStyle(
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
-                                        fontSize: minDimension * 0.04,
-                                        fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                            Icon(Icons.arrow_forward_ios,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: minDimension * 0.04),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: height * 0.03),
+                    user?.providerId == 'password'
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Security',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: minDimension * 0.04,
+                                  )),
+                              SizedBox(height: height * 0.01),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ChangePasswordPage(),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  color: Theme.of(context).colorScheme.surface,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.lock_reset_outlined,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              size: minDimension * 0.07),
+                                          SizedBox(width: width * 0.02),
+                                          Text('Change Password',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  fontSize: minDimension * 0.04,
+                                                  fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                      Icon(Icons.arrow_forward_ios,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          size: minDimension * 0.04),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: height * 0.015),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgotPasswordPage(isAuth: true,),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  color: Theme.of(context).colorScheme.surface,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.password_outlined,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              size: minDimension * 0.07),
+                                          SizedBox(width: width * 0.02),
+                                          Text('Forgot Password',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  fontSize: minDimension * 0.04,
+                                                  fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                      Icon(Icons.arrow_forward_ios,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          size: minDimension * 0.04),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: height * 0.03),
+                            ],
+                          )
+                        : const SizedBox(),
                     Text('General',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: minDimension * 0.04,
                         )),
                     SizedBox(height: height * 0.01),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.language_outlined,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: minDimension * 0.07),
-                              SizedBox(width: width * 0.02),
-                              Text('Language',
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: minDimension * 0.04,
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          Icon(Icons.arrow_forward_ios,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: minDimension * 0.04),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: height * 0.015),
+                    // GestureDetector(
+                    //   onTap: () {},
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           Icon(Icons.language_outlined,
+                    //               color: Theme.of(context).colorScheme.primary,
+                    //               size: minDimension * 0.07),
+                    //           SizedBox(width: width * 0.02),
+                    //           Text('Language',
+                    //               style: TextStyle(
+                    //                   color:
+                    //                       Theme.of(context).colorScheme.primary,
+                    //                   fontSize: minDimension * 0.04,
+                    //                   fontWeight: FontWeight.bold)),
+                    //         ],
+                    //       ),
+                    //       Icon(Icons.arrow_forward_ios,
+                    //           color: Theme.of(context).colorScheme.primary,
+                    //           size: minDimension * 0.04),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(height: height * 0.015),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

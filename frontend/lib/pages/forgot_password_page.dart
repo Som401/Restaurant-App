@@ -6,13 +6,14 @@ import 'package:frontend/auth/auth.dart';
 import 'package:frontend/components/appBar/my_app_bar.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
-import 'package:frontend/components/quick_alerts/wifi_error.dart';
+import 'package:frontend/components/quick_alerts/quick_alerts.dart';
 import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/services/user_services.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
+  final bool isAuth;
+  const ForgotPasswordPage({super.key, required this.isAuth});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -34,7 +35,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: MyAppBar(
-        title: "Change Password",
+        title: "Forgot Password",
         scaffoldKey: _scaffoldKey,
         isFromDrawerMenu: false,
       ),
@@ -119,8 +120,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         !emailController.text.contains('.')) {
                       QuickAlerts.showErrorAlert(context, 'Error',
                           'Please enter a valid email address.', () {});
-                    } else if (emailController.text !=
-                        auth.FirebaseAuth.instance.currentUser!.email) {
+                    } else if (widget.isAuth &&
+                        emailController.text !=
+                            auth.FirebaseAuth.instance.currentUser!.email) {
                       QuickAlerts.showErrorAlert(
                           context,
                           'Error',
@@ -143,19 +145,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           () {
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        userService.signOut(context);
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => const AuthPage()),
-                          (Route<dynamic> route) => false,
-                        );
-                      });
-                      Future.delayed(const Duration(seconds: 5), () {
-                        if (mounted) {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
+                        if (widget.isAuth) {
                           Navigator.of(context).pop();
                           userService.signOut(context);
                           Navigator.of(context).pushAndRemoveUntil(
@@ -163,6 +153,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 builder: (context) => const AuthPage()),
                             (Route<dynamic> route) => false,
                           );
+                        }
+                      });
+                      Future.delayed(const Duration(seconds: 5), () {
+                        if (mounted) {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          if (widget.isAuth) {
+                            Navigator.of(context).pop();
+                            userService.signOut(context);
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const AuthPage()),
+                              (Route<dynamic> route) => false,
+                            );
+                          }
                         }
                       });
                     }
@@ -181,6 +187,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     });
                   }
                 },
+               
                 text: 'Submit',
               ),
             )

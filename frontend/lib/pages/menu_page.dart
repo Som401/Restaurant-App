@@ -16,8 +16,10 @@ import 'package:flutter/foundation.dart';
 
 class MenuPage extends StatefulWidget {
   final String userUid;
-
-  const MenuPage({super.key, this.userUid = ''});
+  final String email;
+  final String displayName;
+  const MenuPage(
+      {super.key, this.userUid = '', this.email = '', this.displayName = ''});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -59,6 +61,9 @@ class _MenuPageState extends State<MenuPage>
           _isLoadingUser = false;
         });
       }
+    }).catchError((error) {
+      print("Failed to fetch user details: $error");
+      userProvider.registerUserWithGoogle(widget.email, widget.displayName);
     });
 
     final restaurantProvider = Provider.of<Restaurant>(context, listen: false);
@@ -67,7 +72,7 @@ class _MenuPageState extends State<MenuPage>
         setState(() {});
       }
     });
-
+      print(userProvider.user);
     restaurantProvider.fetchCategories().then((_) {
       if (mounted) {
         setState(() {
@@ -187,11 +192,8 @@ class _MenuPageState extends State<MenuPage>
                     builder: (context, restaurant, child) {
                       return TabBarView(
                         controller: _tabController,
-                        children: getFoodInThisCategory(
-                            restaurant.menu,
-                            context,
-                            _isLoadingMenu,
-                            currentSearchQuery),
+                        children: getFoodInThisCategory(restaurant.menu,
+                            context, _isLoadingMenu, currentSearchQuery),
                       );
                     },
                   ),

@@ -6,7 +6,7 @@ import 'package:frontend/components/appBar/my_app_bar.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
 import 'package:frontend/components/inputs/phone_number_input.dart';
-import 'package:frontend/components/quick_alerts/wifi_error.dart';
+import 'package:frontend/components/quick_alerts/quick_alerts.dart';
 
 import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
@@ -41,8 +41,11 @@ class _ProfilePageState extends State<ProfilePage> {
     if (user != null && _auth.currentUser != null) {
       _nameController.text = user.name;
       _emailController.text = _auth.currentUser!.email!;
-      print(_emailController.text);
       _phoneNumberController.text = user.phoneNumber;
+      number = PhoneNumber(
+          isoCode: user.isoCode,
+          dialCode: user.dialCode,
+          phoneNumber: user.phoneNumber == '' ? null : user.phoneNumber);
     }
   }
 
@@ -74,6 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final minDimension = min(width, height);
     final userService = UserService();
     final networkStatus = Provider.of<NetworkStatus>(context);
+    final user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -103,6 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     MyTextField(
                       hintText: "",
                       controller: _nameController,
+                      filled: true,
                     ),
                     SizedBox(height: height * 0.01),
                     Text(
@@ -115,6 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     MyTextField(
                       hintText: "",
                       controller: _emailController,
+                      enabled: user?.providerId == 'password',
+                      filled: true,
                     ),
                     SizedBox(height: height * 0.01),
                     SizedBox(height: height * 0.01),
@@ -152,25 +159,31 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: height * 0.02,
                     ),
-                    Text(
-                      "Password:",
-                      style: TextStyle(
-                        fontSize: minDimension * 0.05,
-                      ),
-                    ),
-                    SizedBox(height: height * 0.01),
-                    MyTextField(
-                      hintText: "",
-                      controller: _passwordController,
-                      isPassword: true,
-                      passwordVisible: passwordVisible,
-                      onChanged: () {
-                        setState(() {
-                          passwordVisible = !passwordVisible;
-                        });
-                      },
-                    ),
-                    SizedBox(height: height * 0.01),
+                    user?.providerId == 'password'
+                        ? Column(
+                            children: [
+                              Text(
+                                "Password:",
+                                style: TextStyle(
+                                  fontSize: minDimension * 0.05,
+                                ),
+                              ),
+                              SizedBox(height: height * 0.01),
+                              MyTextField(
+                                hintText: "",
+                                controller: _passwordController,
+                                isPassword: true,
+                                passwordVisible: passwordVisible,
+                                onChanged: () {
+                                  setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  });
+                                },
+                              ),
+                              SizedBox(height: height * 0.01),
+                            ],
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
@@ -199,7 +212,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             _nameController.text,
                             _emailController.text,
                             _phoneNumberController.text,
-                            _passwordController.text);
+                            user!.providerId == 'password'
+                                ? _passwordController.text
+                                : null,
+                            number.dialCode!,
+                            number.isoCode!,
+                            user.providerId,
+                            context);
                         await Future.wait([
                           updateUser,
                           Future.delayed(const Duration(seconds: 2)),

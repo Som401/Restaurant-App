@@ -43,6 +43,7 @@ class MyTextField extends StatelessWidget {
       maxLength: 150,
       style: TextStyle(
         fontSize: minDimension * 0.05,
+        color: Theme.of(context).colorScheme.primary,
       ),
       controller: controller,
       obscureText: isPassword ? !passwordVisible : false,
@@ -69,6 +70,7 @@ class MyTextField extends StatelessWidget {
           fontSize: minDimension * 0.04,
           color: Theme.of(context).colorScheme.secondary,
         ),
+
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25.0),
           borderSide: BorderSide(
@@ -79,6 +81,15 @@ class MyTextField extends StatelessWidget {
           ),
         ),
         enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(25.0),
+          borderSide: BorderSide(
+            color: isDarkMode
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.inverseSurface,
+            width: 1.0,
+          ),
+        ),
+        disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25.0),
           borderSide: BorderSide(
             color: isDarkMode

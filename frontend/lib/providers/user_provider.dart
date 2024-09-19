@@ -31,6 +31,12 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<void> registerUserWithGoogle(email, displayName) async {
+    if (_user == null) {
+      _user = await _userService.registerUserWithGoogle(email, displayName);
+      notifyListeners();
+    }
+  }
 
   void addToCart(FoodInfo food, List<AddonInfo> selectedAddons) {
     CartItem? cartItem = _cart.firstWhereOrNull((item) {

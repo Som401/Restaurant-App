@@ -51,6 +51,7 @@ dependencies:
   intl_phone_number_input: ^0.7.4
   quickalert: ^1.1.0
   connectivity_plus: ^6.0.3
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:

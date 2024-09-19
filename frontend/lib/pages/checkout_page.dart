@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/food_components/payment_details.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
-import 'package:frontend/components/quick_alerts/wifi_error.dart';
+import 'package:frontend/components/quick_alerts/quick_alerts.dart';
 import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/services/restaurant_services.dart';

@@ -4,13 +4,16 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/auth/auth.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
 import 'package:frontend/components/inputs/phone_number_input.dart';
+import 'package:frontend/components/quick_alerts/quick_alerts.dart';
 import 'package:frontend/pages/login_page.dart';
-import 'package:frontend/pages/verification_page.dart';
+import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/services/user_services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -31,11 +34,12 @@ class _SignUpPageState extends State<SignUpPage> {
       TextEditingController();
 
   final UserService _userService = UserService();
+
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
   PhoneNumber number = PhoneNumber(isoCode: 'TN', dialCode: '216');
   bool validNumber = false;
-
+  bool isProcessing = false;
   void onInputChanged(PhoneNumber value) {
     setState(() {
       number = value;
@@ -49,59 +53,32 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void registerUser() async {
-    if (emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty ||
-        fullNameController.text.isEmpty ||
-        phoneNumberController.text.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) =>
-            const AlertDialog(content: Text("Please fill all the fields")),
+    try {
+      await _userService.registerUser(
+        emailController.text,
+        passwordController.text,
+        fullNameController.text,
+        phoneNumberController.text,
+        number.dialCode!,
+        number.isoCode!,
       );
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) => const Center(
-                child: CircularProgressIndicator(),
-              ));
-      if (passwordController.text != confirmPasswordController.text) {
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (context) =>
-              const AlertDialog(content: Text("Passwords do not match")),
-        );
-      } else {
-        try {
-          await _userService.registerUser(
-            emailController.text,
-            passwordController.text,
-            fullNameController.text,
-            phoneNumberController.text,
-          );
+      if (context.mounted) {
+        QuickAlerts.showSuccessAlert(
+            context, 'Success', 'Account created successfully', () {
+          Navigator.pop(context);
+          Navigator.pop(context);
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => VerificationPage(
-                        phoneNumber: phoneNumberController.text,
-                      )),
+              MaterialPageRoute(builder: (context) => const AuthPage()),
               (Route route) => false);
-        } on FirebaseAuthException catch (e) {
-          Navigator.pop(context);
-          showDialog(
-            context: context,
-            builder: (context) =>
-                AlertDialog(content: Text(e.message ?? "An error occurred")),
-          );
-        } catch (e) {
-          Navigator.pop(context);
-          showDialog(
-            context: context,
-            builder: (context) => const AlertDialog(
-                content: Text("An unexpected error occurred")),
-          );
-        }
+        });
       }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        isProcessing = false;
+      });
+      QuickAlerts.showErrorAlert(context, 'Error', e.message ?? '', () {
+        Navigator.pop(context);
+      });
     }
   }
 
@@ -110,22 +87,20 @@ class _SignUpPageState extends State<SignUpPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final minDimension = min(width, height);
+    final networkStatus = Provider.of<NetworkStatus>(context);
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        scrolledUnderElevation: 0,
+        toolbarHeight: height * 0.02,
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(
-            top: !kIsWeb && Platform.isIOS
-                ? MediaQuery.of(context).size.shortestSide < 600
-                    ? 0 // iPhone
-                    : height * 0.1 // iPad
-                : height * 0.1, // Android
+            top: !kIsWeb && Platform.isIOS ? 0 : height * 0.1,
           ),
           child: Column(
             children: [
@@ -166,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     MyTextField(
                       hintText: "Your Name",
-                      controller: emailController,
+                      controller: fullNameController,
                       isEmail: true,
                       filled: true,
                       // enabled: !isReservationProcessing,
@@ -272,8 +247,39 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(height: height * 0.03),
                     MyButton(
                       text: 'Sign Up',
-                      onTap: () {
-                        registerUser();
+                      onTap: () async {
+                        if (isProcessing) return;
+                        if (networkStatus == NetworkStatus.offline) {
+                          QuickAlerts.showErrorAlert(
+                              context,
+                              'No Internet Connection',
+                              'Please check your internet connection and try again.',
+                              () {});
+                        } else if (emailController.text.isEmpty ||
+                            passwordController.text.isEmpty ||
+                            confirmPasswordController.text.isEmpty ||
+                            fullNameController.text.isEmpty ||
+                            phoneNumberController.text.isEmpty) {
+                          QuickAlerts.showErrorAlert(context, 'Error',
+                              'Please fill all the fields.', () {});
+                        } else if (!emailController.text.contains('@') ||
+                            !emailController.text.contains('.')) {
+                          QuickAlerts.showErrorAlert(context, 'Error',
+                              'Please enter a valid email address.', () {});
+                        } else if (passwordController.text !=
+                            confirmPasswordController.text) {
+                          QuickAlerts.showErrorAlert(context, 'Error',
+                              'Passwords do not match.', () {});
+                        } else {
+                          QuickAlerts.showLoadingAlert(
+                              context, 'Processing', 'Signing Up...');
+                          setState(() {
+                            isProcessing = true;
+                          });
+                          Future.delayed(const Duration(seconds: 2), () {
+                            registerUser();
+                          });
+                        }
                       },
                     ),
                     SizedBox(height: height * 0.03),

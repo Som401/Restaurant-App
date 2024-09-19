@@ -5,7 +5,7 @@ import 'package:frontend/auth/auth.dart';
 import 'package:frontend/components/appBar/my_app_bar.dart';
 import 'package:frontend/components/button/my_button.dart';
 import 'package:frontend/components/inputs/my_text_field.dart';
-import 'package:frontend/components/quick_alerts/wifi_error.dart';
+import 'package:frontend/components/quick_alerts/quick_alerts.dart';
 import 'package:frontend/providers/netwouk_status_provider.dart';
 import 'package:frontend/services/user_services.dart';
 import 'package:provider/provider.dart';

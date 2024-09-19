@@ -20,9 +20,10 @@ class AuthPage extends StatelessWidget {
         }
         if (snapshot.hasData) {
           var userUid = snapshot.data!.uid;
-          print(
-              'User logged in with UID: $userUid'); // 5. Inside hasData branch
-          return MenuPage(userUid: userUid);
+          var email = snapshot.data!.email!;
+          var displayName = snapshot.data!.displayName ?? '';
+          return MenuPage(
+              userUid: userUid, email: email, displayName: displayName);
         } else {
           print('No user logged in.'); // 5. Inside else branch
           return const LoginPage();
